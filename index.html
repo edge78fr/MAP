@@ -49,6 +49,9 @@ details.dep>summary:before{content:'▸ ';color:#888}details.dep[open]>summary:b
 #fh{display:flex;align-items:center;gap:8px;padding:10px 14px;font:14px system-ui}#fh b{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#fh a{font-size:13px;color:#1a5fb4;text-decoration:none}#fh button{border:0;background:rgba(255,255,255,.6);border-radius:50%;width:32px;height:32px;font-size:15px;cursor:pointer}
 #fi{flex:1;overflow:auto;padding:4px 14px 14px;font:14px system-ui}#fi table{width:100%;border-collapse:collapse}#fi td{padding:5px 4px;border-bottom:1px solid rgba(0,0,0,.08);vertical-align:top}#fi td:first-child{color:#555;width:42%}#fi .big{display:block;margin:12px 0 4px;padding:10px;text-align:center;border-radius:14px;background:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.9);color:#1a5fb4;text-decoration:none;font-weight:600}
 #fi .sous{color:#444;font-size:13px;margin:2px 0 8px}#fi .nb{font-size:12px;color:#666;margin-bottom:6px}#fi .doc{display:flex;gap:10px;align-items:center;padding:8px;margin:0 0 8px;border-radius:14px;background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.85);text-decoration:none;color:#222}#fi .doc img{width:120px;height:90px;object-fit:contain;background:#fff;border-radius:8px;flex:0 0 auto}#fi .noimg{width:120px;height:90px;display:flex;align-items:center;justify-content:center;font-size:32px;background:#fff;border-radius:8px}#fi .dt{display:flex;flex-direction:column;gap:3px;min-width:0}#fi .dt small{color:#666;word-break:break-all}
+.anStar{font-size:24px;line-height:24px;text-align:center;color:#f5b400;text-shadow:0 0 2px #000,0 0 4px #000a}
+#anList .an{display:flex;align-items:center;gap:6px;padding:3px 0}#anList .an span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}#anList .an button{padding:0 6px}
+.anPop textarea{width:230px;height:90px;font:13px system-ui;box-sizing:border-box}.anPop .txt{white-space:pre-wrap;max-width:240px;font:13px system-ui;margin-bottom:6px}.anPop button{margin-right:4px}
 /* Liquid Glass */
 #p{background:linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.32));-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%);border:1px solid rgba(255,255,255,.65);border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(255,255,255,.25)}
 #p button,.depbar button{background:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.7);box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
@@ -98,6 +101,9 @@ details.dep>summary{padding:9px 8px;font-size:15px}
       <label><input type="radio" name="b" value="w"> Fond blanc</label></div>
    <div id="rlt"><div class="tl-lab">🕰️ Remonter le temps</div><div id="chips"></div><button id="epqc" style="display:none">⇔ Comparer avec aujourd'hui</button></div>
    <div class="opf">Opacité <input id="fondo" class="op" type="range" min="0.1" max="1" step="0.05" value="1" title="Opacité du fond"></div>
+   <h5 style="display:flex;align-items:center;justify-content:space-between">Annotations <span><button id="anAdd" title="Ajouter un point (puis touche la carte)" style="font-size:15px;line-height:1;padding:1px 8px">＋</button></span></h5>
+   <div id="anList" style="font-size:12.5px"></div>
+   <div id="anTools" style="display:none;font-size:11px;margin:2px 0 4px"><a href="#" id="anExp">⇩ Exporter</a> · <a href="#" id="anImp">⇧ Importer</a><input type="file" id="anFile" accept=".json" style="display:none"></div>
    <h5>Cadastre et limites</h5>
    <div class="cou"><label><input id="cad" type="checkbox"> Cadastre (parcelles IGN)</label><input id="cado" class="op" type="range" min="0.1" max="1" step="0.05" value="1" title="Opacité"></div>
    <div class="cou"><label><input id="cad2" type="checkbox"> Cadastre 2008-2013 (scans)</label><input id="cad2o" class="op" type="range" min="0.1" max="1" step="0.05" value="1" title="Opacité"></div>
@@ -330,7 +336,7 @@ async function chercher(){const t=q.value.trim();if(!t)return;res.textContent='R
 document.getElementById('go').onclick=chercher;q.onkeydown=e=>{if(e.key==='Enter')chercher()};
 // ---------- coordonnées ----------
 let mesure=null;
-map.on('click',e=>{if(mesure)return;const t=`${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)}`;
+map.on('click',e=>{if(mesure||anMode||e.anFait)return;const t=`${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)}`;
  const d=L.DomUtil.create('div','cp');d.innerHTML=`<b>${t}</b><br><button>Copier</button>`;
  d.querySelector('button').onclick=ev=>{ev.target.textContent=copier(t)?'Copié ✔':'Sélectionne le texte'};
  L.popup().setLatLng(e.latlng).setContent(d).openOn(map)});
@@ -382,12 +388,41 @@ async function ouvreFiche(id,attrs){ft.textContent=id;fo.href=ficheUrl(id);
  if(!docs.length){box.innerHTML=`Aucun document numérisé trouvé.<a class="big" href="${ficheUrl(id)}" target="_blank" rel="noopener">📄 Ouvrir la fiche complète</a>`;return}
  box.innerHTML=`<div class="nb">${docs.length} document(s) numérisé(s)</div>`+docs.map(d=>`<a class="doc" href="${viaR(d.u)}" target="_blank" rel="noopener">${d.img?`<img loading="lazy" src="${viaR(d.img)}" alt="">`:'<span class="noimg">📄</span>'}<span class="dt"><b>${esc(d.type||d.nom)}</b><small>${esc(d.nom)}${d.poids?' · '+esc(d.poids):''}</small></span></a>`).join('');}
 
-map.on('click',async e=>{if(!bssL||(typeof mesure!=='undefined'&&mesure))return;const z=map.getZoom();if(z<13)return;
+map.on('click',async e=>{if(anMode||e.anFait||!bssL||(typeof mesure!=='undefined'&&mesure))return;const z=map.getZoom();if(z<13)return;
  const p=map.latLngToContainerPoint(e.latlng),r=12,sw=map.containerPointToLatLng([p.x-r,p.y+r]),ne=map.containerPointToLatLng([p.x+r,p.y-r]);
  const A=L.CRS.EPSG3857.project(sw),Bp=L.CRS.EPSG3857.project(ne);
  const u=BRGM+`?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=${bssLay}&QUERY_LAYERS=${bssLay}&CRS=EPSG:3857&BBOX=${A.x},${A.y},${Bp.x},${Bp.y}&WIDTH=25&HEIGHT=25&I=12&J=12&INFO_FORMAT=text/plain&FEATURE_COUNT=5`;
  try{const t=await fetch(u).then(r=>r.text());const m=t.match(/BSS\d{3}[A-Z0-9]{4}/)||t.match(/\d{5}X\d{4}(\/[A-Z0-9_-]+)?/);
   if(m){const attrs=[...t.matchAll(/^\s*([\w.]+)\s*=\s*'?(.*?)'?\s*$/gm)].map(a=>[a[1],a[2]]);ouvreFiche(m[0].startsWith('BSS')?m[0]:m[0],attrs)}}catch(err){info.textContent='Point BRGM : fiche non joignable depuis l\'atlas.'}});
+
+// ---------- Annotations (points étoile, stockés sur l'appareil) ----------
+let ANN=store.get('ann',[]);const anLay=L.layerGroup().addTo(map),anMk={};let anMode=false;
+const anIcon=L.divIcon({className:'anStar',html:'★',iconSize:[24,24],iconAnchor:[12,12],popupAnchor:[0,-10]});
+const anEsc=t=>String(t||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const anSave=()=>{store.set('ann',ANN);anListe()};
+function anVue(a){return `<div class="anPop"><div class="txt">${anEsc(a.t)||'<i style="color:#888">(sans texte)</i>'}</div><div style="font-size:11px;color:#888;margin-bottom:6px">${a.lat.toFixed(6)}, ${a.lng.toFixed(6)}${a.d?' · modifié le '+new Date(a.d).toLocaleDateString('fr-FR'):''}</div><button onclick="anEdit('${a.id}')">✏️ Éditer</button><button onclick="anSuppr('${a.id}')">🗑</button></div>`}
+function anEditHtml(a){return `<div class="anPop"><textarea id="anTx">${anEsc(a.t)}</textarea><br><button onclick="anOk('${a.id}')">✔ Enregistrer</button><button onclick="anAnnule('${a.id}')">Annuler</button></div>`}
+function anPose(a){const m=L.marker([a.lat,a.lng],{icon:anIcon,draggable:true,zIndexOffset:1000}).bindPopup(anVue(a),{minWidth:240}).bindTooltip(()=>anEsc((a.t||'Point').split('\n')[0]),{direction:'top',offset:[0,-10]});
+ m.on('dragend',()=>{const p=m.getLatLng();a.lat=p.lat;a.lng=p.lng;a.d=Date.now();anSave();m.setPopupContent(anVue(a))});anLay.addLayer(m);anMk[a.id]=m}
+window.anEdit=id=>{const a=ANN.find(x=>x.id===id);anMk[id].setPopupContent(anEditHtml(a)).openPopup();setTimeout(()=>{const t=document.getElementById('anTx');t&&t.focus()},50)};
+window.anOk=id=>{const a=ANN.find(x=>x.id===id);a.t=document.getElementById('anTx').value.trim();a.d=Date.now();anSave();anMk[id].setPopupContent(anVue(a)).openPopup()};
+window.anAnnule=id=>{const a=ANN.find(x=>x.id===id);anMk[id].setPopupContent(anVue(a)).openPopup()};
+window.anSuppr=id=>{const a=ANN.find(x=>x.id===id);if(a.t&&!window.confirm('Supprimer ce point ?'))return;ANN=ANN.filter(x=>x.id!==id);anLay.removeLayer(anMk[id]);delete anMk[id];anSave()};
+function anListe(){const el=document.getElementById('anList');document.getElementById('anTools').style.display='block';
+ el.innerHTML=ANN.length?'':'<div style="color:#888;font-size:11.5px">Aucun point. Touche ＋ puis la carte.</div>';
+ ANN.forEach(a=>{const d=document.createElement('div');d.className='an';d.innerHTML=`<b style="color:#f5b400">★</b><span title="Aller sur ce point">${anEsc((a.t||'Point sans texte').split('\n')[0])}</span><button title="Éditer">✏️</button>`;
+  d.children[1].onclick=()=>{map.setView([a.lat,a.lng],Math.max(map.getZoom(),17));anMk[a.id].openPopup();plier()};d.children[2].onclick=()=>{map.setView([a.lat,a.lng],Math.max(map.getZoom(),17));anEdit(a.id);plier()};el.appendChild(d)})}
+ANN.forEach(anPose);anListe();
+const anAdd=document.getElementById('anAdd');
+const anCap=L.DomUtil.create('div','',map.getContainer());anCap.style.cssText='position:absolute;inset:0;z-index:650;cursor:crosshair;display:none';
+L.DomEvent.disableClickPropagation(anCap);
+function anFin(){anMode=false;anAdd.classList.remove('on');anCap.style.display='none';info.textContent=''}
+anAdd.onclick=()=>{if(anMode){anFin();return}anMode=true;anAdd.classList.add('on');anCap.style.display='block';info.textContent='Touche la carte à l\'endroit exact du point.';plier()};
+anCap.addEventListener('click',e=>{const r=map.getContainer().getBoundingClientRect();const ll=map.containerPointToLatLng([e.clientX-r.left,e.clientY-r.top]);anFin();
+ const a={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),lat:ll.lat,lng:ll.lng,t:'',d:Date.now()};ANN.push(a);anSave();anPose(a);anEdit(a.id)});
+document.getElementById('anExp').onclick=e=>{e.preventDefault();const b=new Blob([JSON.stringify(ANN,null,1)],{type:'application/json'});const x=document.createElement('a');x.href=URL.createObjectURL(b);x.download='annotations.json';x.click()};
+document.getElementById('anImp').onclick=e=>{e.preventDefault();document.getElementById('anFile').click()};
+document.getElementById('anFile').onchange=async e=>{try{const l=JSON.parse(await e.target.files[0].text());let n=0;for(const a of l){if(a&&a.id&&typeof a.lat==='number'&&!ANN.some(x=>x.id===a.id)){ANN.push(a);anPose(a);n++}}anSave();info.textContent=n+' point(s) importé(s).'}catch(err){info.textContent='Fichier non reconnu.'}};
 // ---------- Remonter le temps ----------
 map.createPane('epoq').style.zIndex=220;
 let EPQ=[['','Aujourd\'hui'],['ORTHOIMAGERY.ORTHOPHOTOS2011-2015','2011-15','normal','image/jpeg'],['ORTHOIMAGERY.ORTHOPHOTOS2006-2010','2006-10','normal','image/jpeg'],['ORTHOIMAGERY.ORTHOPHOTOS2000-2005','2000-05','normal','image/jpeg'],['ORTHOIMAGERY.ORTHOPHOTOS.1950-1965','1950-65','normal','image/png']];
