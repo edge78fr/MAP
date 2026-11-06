@@ -45,6 +45,12 @@ details.dep>summary:before{content:'▸ ';color:#888}details.dep[open]>summary:b
 #chips{display:flex;gap:4px;overflow-x:auto;padding-bottom:3px;scrollbar-width:thin}
 #chips button{flex:0 0 auto;border-radius:12px!important;padding:2px 9px!important;white-space:nowrap}
 #chips button.on{background:#2a6;color:#fff;border-color:#2a6}#epqc{margin-top:5px;width:100%}
+#adjB{position:absolute;z-index:1400;left:10px;bottom:28px;display:none;border:1px solid rgba(255,255,255,.8);border-radius:999px;padding:9px 14px;font:600 13px system-ui;cursor:pointer;background:linear-gradient(135deg,rgba(255,255,255,.8),rgba(255,255,255,.55));-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:0 6px 24px rgba(0,0,0,.25)}
+#adjP{position:absolute;z-index:1500;left:10px;bottom:28px;width:min(330px,calc(100% - 20px));display:none;padding:12px 14px;font:13px system-ui;border-radius:20px;background:linear-gradient(135deg,rgba(255,255,255,.8),rgba(255,255,255,.55));-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.7);box-shadow:0 10px 40px rgba(0,0,0,.3)}
+#adjP .r{display:flex;align-items:center;gap:5px;margin:6px 0}#adjP .r b{width:86px;flex:none}#adjP .r span{min-width:62px;text-align:center;font-variant-numeric:tabular-nums}
+#adjP button{border:1px solid #ccd;background:#fff;border-radius:9px;padding:5px 8px;cursor:pointer;font:13px system-ui}#adjP .g{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+#adjP .ok{background:#1a7f37;color:#fff;border-color:#1a7f37}
+.adjEdit{cursor:move!important}
 #fiche{position:absolute;z-index:1500;right:10px;top:10px;max-height:calc(100% - 20px);width:min(520px,calc(100% - 20px));display:none;flex-direction:column;overflow:hidden;border-radius:22px;background:linear-gradient(135deg,rgba(255,255,255,.7),rgba(255,255,255,.45));-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.7);box-shadow:0 10px 40px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.9)}
 #fh{display:flex;align-items:center;gap:8px;padding:10px 14px;font:14px system-ui}#fh b{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#fh a{font-size:13px;color:#1a5fb4;text-decoration:none}#fh button{border:0;background:rgba(255,255,255,.6);border-radius:50%;width:32px;height:32px;font-size:15px;cursor:pointer}
 #fi{flex:1;overflow:auto;padding:4px 14px 14px;font:14px system-ui}#fi table{width:100%;border-collapse:collapse}#fi td{padding:5px 4px;border-bottom:1px solid rgba(0,0,0,.08);vertical-align:top}#fi td:first-child{color:#555;width:42%}#fi .big{display:block;margin:12px 0 4px;padding:10px;text-align:center;border-radius:14px;background:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.9);color:#1a5fb4;text-decoration:none;font-weight:600}
@@ -87,7 +93,11 @@ details.dep>summary{padding:9px 8px;font-size:15px}
 <input id="code" type="password" autocomplete="current-password" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX" autofocus>
 <label style="display:block;margin-top:8px;font-size:13px"><input id="memo" type="checkbox"> Se souvenir sur cet appareil</label>
 <button type="submit">Déverrouiller</button><div class="err" id="lerr"></div></form></div>
-<div id="m"></div><div id="fiche"><div id="fh"><b id="ft">Fiche BRGM</b><a id="fo" target="_blank" rel="noopener">↗ Onglet</a><button id="fx">✕</button></div><div id="fi"></div></div><div id="bulle"></div><div id="rideau"><span>⇔</span></div>
+<div id="m"></div><button id="adjB">🎯 Ajuster le LiDAR</button><div id="adjP"><b id="adjT">Ajuster</b><div style="font-size:12px;color:#555;margin:4px 0 2px">Fais glisser le tracé sur la carte pour le déplacer.</div>
+<div class="r"><b>Rotation</b><button data-a="r" data-v="-2">⟲2°</button><button data-a="r" data-v="-0.2">⟲</button><span id="adjR"></span><button data-a="r" data-v="0.2">⟳</button><button data-a="r" data-v="2">2°⟳</button></div>
+<div class="r"><b>Taille</b><button data-a="s" data-v="-2">−2%</button><button data-a="s" data-v="-0.2">−</button><span id="adjS"></span><button data-a="s" data-v="0.2">+</button><button data-a="s" data-v="2">+2%</button></div>
+<div class="r"><b>Fin (50 cm)</b><button data-a="x" data-v="-1">←</button><button data-a="y" data-v="1">↑</button><button data-a="y" data-v="-1">↓</button><button data-a="x" data-v="1">→</button></div>
+<div class="g"><button class="ok" id="adjOk">✔ Enregistrer</button><button id="adjNo">Annuler</button><button id="adjDef">Calage d'origine</button><button id="adjCp">📋 Copier pour Claude</button></div><div id="adjMsg" style="font-size:11px;color:#1a7f37;margin-top:5px"></div></div><div id="fiche"><div id="fh"><b id="ft">Fiche BRGM</b><a id="fo" target="_blank" rel="noopener">↗ Onglet</a><button id="fx">✕</button></div><div id="fi"></div></div><div id="bulle"></div><div id="rideau"><span>⇔</span></div>
 <div id="p">
  <div id="tete"><b>Atlas</b><button id="pli" title="Replier / déplier le menu">☰</button></div>
  <div id="corps">
@@ -183,7 +193,7 @@ aquCb.onchange=e=>{store.set('aqu',e.target.checked);e.target.checked?aquOn():(a
 const zCol={'PPR':'#e00000','R111-3':'#222','PAC':'#0050ff','NON-REGL':'#ff9900'};let zonL=null;
 async function zonOn(){if(!zonL){await infoCharge();const b=await lire('zonages.json.gz');if(!b)return;const t=await new Response(new Blob([b]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
  zonL=L.geoJSON(JSON.parse(t),{pane:'cadp',style:f=>({color:zCol[f.properties.z]||'#888',weight:f.properties.z==='NON-REGL'?1.5:2.5,dashArray:f.properties.z==='NON-REGL'?'5 4':null,fillColor:zCol[f.properties.z]||'#888',fillOpacity:.08,opacity:.9}),
- onEachFeature:(f,l)=>{const P=f.properties;l.bindTooltip(`${P.c} – ${P.m} – ${P.z}`,{sticky:true});l.options.bubblingMouseEvents=false;l.bindPopup(()=>{const ins=insNom(P.c);return `<div style="font:13px system-ui;max-width:260px"><b>Zonage carrières IGC</b><div style="margin:4px 0">${anEsc(INFO&&INFO.n[ins]||P.c)} · ${anEsc(P.m)} · ${anEsc(P.z)}</div>${infoPied(null,ins,'',P.m.toLowerCase()+' carrière','Inspection générale des carrières (IGC)')}</div>`})}})}
+ onEachFeature:(f,l)=>{const P=f.properties;l.bindTooltip(`${P.c} – ${P.m} – ${P.z}`,{sticky:true});l.options.bubblingMouseEvents=false;l.bindPopup(()=>{const ins=insNom(P.c);return `<div style="font:13px system-ui;max-width:260px"><b>Zonage carrières IGC</b><div style="margin:4px 0">${anEsc(INFO&&INFO.n[ins]||P.c)} · ${anEsc(P.m)} · ${anEsc(P.z)}</div>${infoPied(null,ins,'','carrière souterraine '+P.m.toLowerCase(),'Inspection générale des carrières (IGC)')}</div>`})}})}
  opApply.zono(opV('zono'));if(document.getElementById('zon').checked)zonL.addTo(map)}
 
 let eurL=null,eurG={};const eurCol={l:'#e8000b',p:'#d1007a',c:'#8a5cc2',x:'#ff7a00',r:'#2b8fd6'};
@@ -272,6 +282,33 @@ async function deverrouille(code){const L_=await (await fetch('lock.json',{cache
 const CTile=L.GridLayer.extend({createTile(c,done){const img=document.createElement('img');img.alt='';img.style.visibility='hidden';
  lire(`${this.options.d}/${c.z}/${c.x}/${c.y}`).then(buf=>{if(!buf){done(null,img);return}const u=URL.createObjectURL(new Blob([buf],{type:'image/webp'}));
   img.onload=()=>{URL.revokeObjectURL(u);img.style.visibility='';done(null,img)};img.onerror=()=>done(null,img);img.src=u}).catch(()=>done(null,img));return img}});
+const AdjL=L.Layer.extend({initialize(p,op){this.p=p;this.op=op;this.img=null},
+ onAdd(m){this._m=m;const c=this._c=L.DomUtil.create('canvas','leaflet-zoom-hide');c.style.position='absolute';c.style.pointerEvents='none';m.getPane('plans').appendChild(c);m.on('move zoomend viewreset resize',this.redraw,this);this.redraw()},
+ onRemove(m){this._c.remove();m.off('move zoomend viewreset resize',this.redraw,this)},
+ setOpacity(o){this.op=o;this.redraw()},
+ redraw(){const m=this._m,c=this._c;if(!m||!c)return;const s=m.getSize(),d=window.devicePixelRatio||1;L.DomUtil.setPosition(c,m.containerPointToLayerPoint([0,0]));
+  if(c.width!==Math.round(s.x*d)||c.height!==Math.round(s.y*d)){c.width=Math.round(s.x*d);c.height=Math.round(s.y*d);c.style.width=s.x+'px';c.style.height=s.y+'px'}
+  const g=c.getContext('2d');g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,c.width,c.height);if(!this.img)return;
+  const p=this.p,cp=m.latLngToContainerPoint(p.c),k=p.m*256*Math.pow(2,m.getZoom())/40075016.68557849,a=p.r*Math.PI/180,co=Math.cos(a)*k*d,si=Math.sin(a)*k*d;
+  g.globalAlpha=this.op;g.imageSmoothingQuality='high';g.setTransform(co,si,-si,co,cp.x*d,cp.y*d);g.drawImage(this.img,-this.img.width/2,-this.img.height/2)}});
+let adjEd=null;const adjB=document.getElementById('adjB'),adjP=document.getElementById('adjP');
+const adjDef=p=>({c:[...p.adj.c],r:p.adj.r,m:p.adj.m});
+function adjMaj(){const n=P.some(p=>p.adj&&p.layer);adjB.style.display=n&&!adjEd?'block':'none';if(!n&&adjEd)adjFin(false)}
+function adjAff(){const p=adjEd.layer.p,d=adjDef(adjEd);document.getElementById('adjR').textContent=(p.r-d.r>=0?'+':'')+(p.r-d.r).toFixed(1)+'°';document.getElementById('adjS').textContent=(p.m/d.m*100).toFixed(1)+' %';adjEd.layer.redraw()}
+function adjDebut(){const q=P.find(p=>p.adj&&p.layer);if(!q)return;adjEd=q;q.adjAvant=JSON.parse(JSON.stringify(q.layer.p));document.getElementById('adjT').textContent='Ajuster : '+q.nom;
+ adjP.style.display='block';adjB.style.display='none';document.getElementById('adjMsg').textContent='';map.dragging.disable();map.getContainer().classList.add('adjEdit');adjAff()}
+function adjFin(ok){const q=adjEd;if(!q)return;if(!ok&&q.adjAvant){q.layer.p=q.adjAvant;q.layer.redraw()}
+ adjEd=null;adjP.style.display='none';map.dragging.enable();map.getContainer().classList.remove('adjEdit');adjMaj()}
+adjB.onclick=adjDebut;document.getElementById('adjNo').onclick=()=>adjFin(false);
+document.getElementById('adjOk').onclick=()=>{store.set('adj_'+adjEd.id,adjEd.layer.p);document.getElementById('adjMsg').textContent='Enregistré sur cet appareil.';adjEd.adjAvant=null;setTimeout(()=>adjFin(true),700)};
+document.getElementById('adjDef').onclick=()=>{adjEd.layer.p=adjDef(adjEd);adjAff()};
+document.getElementById('adjCp').onclick=async()=>{const t='CALAGE '+adjEd.id+' '+JSON.stringify(adjEd.layer.p);try{await navigator.clipboard.writeText(t);document.getElementById('adjMsg').textContent='Copié ! Colle-le dans la discussion avec Claude.'}catch(e){prompt('Copie ce texte :',t)}};
+adjP.querySelectorAll('button[data-a]').forEach(b=>b.onclick=()=>{const p=adjEd.layer.p,v=+b.dataset.v,a=b.dataset.a;
+ if(a==='r')p.r+=v;else if(a==='s')p.m*=1+v/100;else{const mpp=0.5/Math.cos(p.c[0]*Math.PI/180);const pt=map.project(p.c,20),u=256*Math.pow(2,20)/40075016.68557849*mpp;const n=map.unproject([pt.x+(a==='x'?v*u:0),pt.y-(a==='y'?v*u:0)],20);p.c=[n.lat,n.lng]}adjAff()});
+{const mc=map.getContainer();let st=null;
+ mc.addEventListener('pointerdown',e=>{if(!adjEd||adjP.contains(e.target)||e.target.closest('#panel,.leaflet-control'))return;st={x:e.clientX,y:e.clientY,c:map.latLngToContainerPoint(adjEd.layer.p.c)};mc.setPointerCapture(e.pointerId);e.stopPropagation()},true);
+ mc.addEventListener('pointermove',e=>{if(!st||!adjEd)return;const ll=map.containerPointToLatLng([st.c.x+e.clientX-st.x,st.c.y+e.clientY-st.y]);adjEd.layer.p.c=[ll.lat,ll.lng];adjEd.layer.redraw();e.stopPropagation()},true);
+ const fin=e=>{if(st){st=null;try{mc.releasePointerCapture(e.pointerId)}catch(_){}}};mc.addEventListener('pointerup',fin,true);mc.addEventListener('pointercancel',fin,true)}
 const memDK=()=>{try{return sessionStorage.getItem('map_dk')||localStorage.getItem('map_dk')}catch(e){return null}};
 async function demarre(dk){await cles(dk);const buf=await lire('plans.json');if(!buf)throw 'données';document.getElementById('lock').style.display='none';if(zonCb.checked)zonOn();if(eurCb.checked)eurOn();if(cvfCb.checked)cvfOn();if(aquCb.checked)aquOn();initPlans(JSON.parse(new TextDecoder().decode(buf)))}
 document.getElementById('lockf').onsubmit=async e=>{e.preventDefault();const err=document.getElementById('lerr');err.textContent='Vérification…';
@@ -287,12 +324,13 @@ const contCb=document.getElementById('cont');contCb.checked=store.get('cont',tru
 contCb.onchange=()=>{contCb.checked?contours.addTo(map):map.removeLayer(contours);store.set('cont',contCb.checked)};
 function sauve(){const o={};P.forEach(p=>{if(p.layer||p.op!==1)o[p.id]={on:!!p.layer,op:p.op}});store.set('plans',o)}
 function charge(p,aller){
+ if(!p.layer&&p.adj){p.layer=new AdjL(store.get('adj_'+p.id,null)||adjDef(p),p.op).addTo(map);const Ly=p.layer;lire(p.adj.img).then(b=>b&&createImageBitmap(new Blob([b],{type:'image/webp'}))).then(im=>{if(im){Ly.img=im;Ly.redraw()}});p.ui.cb.checked=true;p.ui.row.classList.add('actif');p.poly&&p.poly.setStyle({fillOpacity:0,weight:1,dashArray:'4 4'})}
  if(!p.layer){p.layer=new CTile({d:p.d,minZoom:p.min||13,maxZoom:22,maxNativeZoom:p.nat||19,minNativeZoom:p.minNat||15,bounds:L.latLngBounds([p.bbox[1],p.bbox[0]],[p.bbox[3],p.bbox[2]]),pane:'plans',opacity:p.op,keepBuffer:1,updateWhenZooming:false}).addTo(map);
   p.ui.cb.checked=true;p.ui.row.classList.add('actif');p.poly&&p.poly.setStyle({fillOpacity:0,weight:1,dashArray:'4 4'})}
  if(p.extra&&!p.xl)chargeExtra(p);
  if(aller)map.fitBounds([[p.bbox[1],p.bbox[0]],[p.bbox[3],p.bbox[2]]],{maxZoom:17});
- sauve();majNb()}
-function decharge(p){if(p.layer){map.removeLayer(p.layer);p.layer=null}if(p.xl){map.removeLayer(p.xl);p.xl=null}p.ui.cb.checked=false;p.ui.row.classList.remove('actif');p.poly&&p.poly.setStyle({fillOpacity:.15,weight:2,dashArray:null});sauve();majNb()}
+ sauve();majNb();adjMaj()}
+function decharge(p){if(p.layer){map.removeLayer(p.layer);p.layer=null}if(p.xl){map.removeLayer(p.xl);p.xl=null}p.ui.cb.checked=false;p.ui.row.classList.remove('actif');p.poly&&p.poly.setStyle({fillOpacity:.15,weight:2,dashArray:null});sauve();majNb();adjMaj()}
 const colT={salle:'#c0f',info:'#08f',pa:'#f00',pb:'#f60',vehicule:'#555',cao:'#0a0',caf:'#060',passage:'#fa0',elec:'#ff0',danger:'#f00'};
 const colR={principal:'#e00',secondaire:'#f80',chemin:'#fc0'};
 async function chargeExtra(p){p.xl=L.layerGroup().addTo(map);const bx=await lire('extra/'+p.extra);if(!bx||!p.xl)return;const j=JSON.parse(new TextDecoder().decode(bx));if(!p.xl)return;
@@ -342,7 +380,7 @@ async function chercher(){const t=q.value.trim();if(!t)return;res.textContent='R
 document.getElementById('go').onclick=chercher;q.onkeydown=e=>{if(e.key==='Enter')chercher()};
 // ---------- coordonnées ----------
 let mesure=null;
-map.on('click',e=>{if(mesure||anMode||e.anFait)return;const t=`${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)}`;
+map.on('click',e=>{if(mesure||anMode||adjEd||e.anFait)return;const t=`${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)}`;
  const d=L.DomUtil.create('div','cp');d.innerHTML=`<b>${t}</b><br><button>Copier</button>`;
  d.querySelector('button').onclick=ev=>{ev.target.textContent=copier(t)?'Copié ✔':'Sélectionne le texte'};
  L.popup().setLatLng(e.latlng).setContent(d).openOn(map)});
@@ -435,7 +473,7 @@ function infoPied(key,ins,nom,lab,src){const I=INFO||{e:{},c:{},n:{}},e=key&&I.e
  const lien=(x)=>{const l=x.l||[[x.s,x.u]];return `<div style="font-size:11px;color:#888;margin-top:4px">Source${l.length>1?'s':''} : ${l.map(([a,u])=>`<a href="${u}" target="_blank" rel="noopener">${anEsc(a)}</a>`).join(' · ')}</div>`};
  let box='';if(e)box+=`<div style="margin-bottom:6px">${anEsc(e.t)}</div>${lien(e)}`;
  if(c)box+=`<div style="margin-top:${e?8:0}px;padding-top:${e?6:0}px;${e?'border-top:1px solid #ddd':''}"><b>À savoir sur la commune${cn?' ('+anEsc(cn)+')':''}</b><div style="margin-top:3px">${anEsc(c.t)}</div>${lien(c)}</div>`;
- const n=(nom&&!/^[\d\s_-]+$/.test(nom))?'"'+nom+'" ':'';const q=encodeURIComponent((n+lab.replace(/^[^\wÀ-ÿ]+/,'')+' '+cn).trim());
+ const n=(nom&&!/^[\d\s_-]+$/.test(nom))?'"'+nom+'" ':'';let lb=lab.replace(/^[^\wÀ-ÿ]+/,'');if(/^carri[eè]re$/i.test(lb.trim()))lb='carrière souterraine';const q=encodeURIComponent((n+lb+' '+cn).trim());
  const web=e?'':`<div style="margin-top:5px;font-size:12px"><a href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener">🔎 Chercher sur le web</a></div>`;
  return `${web}<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-top:5px"><div style="font-size:11px;color:#888">Source : ${src}</div>${box?'<button class="ib" onclick="infoTog(this)" title="En savoir plus" style="border:0;background:none;font-size:18px;cursor:pointer;padding:0;line-height:1">ℹ️</button>':''}</div>${box?'<div class="ibx" hidden style="margin-top:6px;padding:7px 8px;background:#f4f6fa;border-radius:8px;font-size:12px;color:#333">'+box+'</div>':''}`}
 let NOMI=null;const nrm=x=>(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z]+/g,' ').trim();
