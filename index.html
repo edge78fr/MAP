@@ -181,9 +181,9 @@ let aquL=null;async function aquOn(){if(!aquL){const b=await lire('aqueducs.json
 const aquCb=document.getElementById('aqu');aquCb.checked=store.get('aqu',false);
 aquCb.onchange=e=>{store.set('aqu',e.target.checked);e.target.checked?aquOn():(aquL&&map.removeLayer(aquL))};
 const zCol={'PPR':'#e00000','R111-3':'#222','PAC':'#0050ff','NON-REGL':'#ff9900'};let zonL=null;
-async function zonOn(){if(!zonL){const b=await lire('zonages.json.gz');if(!b)return;const t=await new Response(new Blob([b]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+async function zonOn(){if(!zonL){await infoCharge();const b=await lire('zonages.json.gz');if(!b)return;const t=await new Response(new Blob([b]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
  zonL=L.geoJSON(JSON.parse(t),{pane:'cadp',style:f=>({color:zCol[f.properties.z]||'#888',weight:f.properties.z==='NON-REGL'?1.5:2.5,dashArray:f.properties.z==='NON-REGL'?'5 4':null,fillColor:zCol[f.properties.z]||'#888',fillOpacity:.08,opacity:.9}),
- onEachFeature:(f,l)=>l.bindTooltip(`${f.properties.c} – ${f.properties.m} – ${f.properties.z}`,{sticky:true})})}
+ onEachFeature:(f,l)=>{const P=f.properties;l.bindTooltip(`${P.c} – ${P.m} – ${P.z}`,{sticky:true});l.options.bubblingMouseEvents=false;l.bindPopup(()=>{const ins=insNom(P.c);return `<div style="font:13px system-ui;max-width:260px"><b>Zonage carrières IGC</b><div style="margin:4px 0">${anEsc(INFO&&INFO.n[ins]||P.c)} · ${anEsc(P.m)} · ${anEsc(P.z)}</div>${infoPied(null,ins,'',P.m.toLowerCase()+' carrière','Inspection générale des carrières (IGC)')}</div>`})}})}
  opApply.zono(opV('zono'));if(document.getElementById('zon').checked)zonL.addTo(map)}
 
 let eurL=null,eurG={};const eurCol={l:'#e8000b',p:'#d1007a',c:'#8a5cc2',x:'#ff7a00',r:'#2b8fd6'};
@@ -432,12 +432,14 @@ anCap.addEventListener('click',e=>{const r=map.getContainer().getBoundingClientR
 const CVF={c:['Carrière','#3cb043'],g:['Galerie','#111'],s:['Souterrain','#6a00ff'],m:['Ouvrage militaire','#5a0060'],p:['Puits','#29b6f6']};
 let INFO=null;async function infoCharge(){if(INFO)return;try{const b=await lire('info.json.gz');INFO=b?JSON.parse(await new Response(new Blob([b]).stream().pipeThrough(new DecompressionStream('gzip'))).text()):{e:{},c:{},n:{}}}catch(e){INFO={e:{},c:{},n:{}}}}
 function infoPied(key,ins,nom,lab,src){const I=INFO||{e:{},c:{},n:{}},e=key&&I.e[key],c=ins&&I.c[ins],cn=(ins&&I.n[ins])||'';
- const lien=(x)=>`<div style="font-size:11px;color:#888;margin-top:4px">Source : <a href="${x.u}" target="_blank" rel="noopener">${anEsc(x.s)}</a></div>`;
+ const lien=(x)=>{const l=x.l||[[x.s,x.u]];return `<div style="font-size:11px;color:#888;margin-top:4px">Source${l.length>1?'s':''} : ${l.map(([a,u])=>`<a href="${u}" target="_blank" rel="noopener">${anEsc(a)}</a>`).join(' · ')}</div>`};
  let box='';if(e)box+=`<div style="margin-bottom:6px">${anEsc(e.t)}</div>${lien(e)}`;
  if(c)box+=`<div style="margin-top:${e?8:0}px;padding-top:${e?6:0}px;${e?'border-top:1px solid #ddd':''}"><b>À savoir sur la commune${cn?' ('+anEsc(cn)+')':''}</b><div style="margin-top:3px">${anEsc(c.t)}</div>${lien(c)}</div>`;
  const n=(nom&&!/^[\d\s_-]+$/.test(nom))?'"'+nom+'" ':'';const q=encodeURIComponent((n+lab.replace(/^[^\wÀ-ÿ]+/,'')+' '+cn).trim());
  const web=e?'':`<div style="margin-top:5px;font-size:12px"><a href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener">🔎 Chercher sur le web</a></div>`;
  return `${web}<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-top:5px"><div style="font-size:11px;color:#888">Source : ${src}</div>${box?'<button class="ib" onclick="infoTog(this)" title="En savoir plus" style="border:0;background:none;font-size:18px;cursor:pointer;padding:0;line-height:1">ℹ️</button>':''}</div>${box?'<div class="ibx" hidden style="margin-top:6px;padding:7px 8px;background:#f4f6fa;border-radius:8px;font-size:12px;color:#333">'+box+'</div>':''}`}
+let NOMI=null;const nrm=x=>(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z]+/g,' ').trim();
+function insNom(c){if(!INFO)return'';if(!NOMI){NOMI={};for(const k in INFO.n)if(/^(78|91|95)/.test(k))NOMI[nrm(INFO.n[k])]=k}c=(c||'').replace(/^(.*)\((LE|LA|LES|L')\)$/,'$2 $1');return NOMI[nrm(c)]||NOMI[nrm('L '+c)]||''}
 window.infoTog=b=>{const x=b.parentNode.nextElementSibling;x.hidden=!x.hidden;const P=map._popup;if(P){P._updateLayout();P._updatePosition();P._adjustPan&&P._adjustPan()}};
 const cvfR=L.canvas({padding:.3});let cvfG=null;const cvfSub=[...document.querySelectorAll('#cvfsub input')];{const st=store.get('cvfsub',null);if(st)cvfSub.forEach(i=>i.checked=!!st[i.dataset.c])}
 let mvtG=null;async function mvtCharge(){if(mvtG)return;const b=await lire('mvt.json.gz');if(!b)return;const t=await new Response(new Blob([b]).stream().pipeThrough(new DecompressionStream('gzip'))).text();mvtG=L.layerGroup();
