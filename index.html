@@ -122,7 +122,8 @@ details.dep>summary{padding:9px 8px;font-size:15px}
 <label><input type="checkbox" data-c="g" checked> <b style="color:#111">●</b> Galeries <small>(335)</small></label>
 <label><input type="checkbox" data-c="s" checked> <b style="color:#6a00ff">●</b> Souterrains <small>(2 165)</small></label>
 <label><input type="checkbox" data-c="m"> <b style="color:#5a0060">●</b> Ouvrages militaires <small>(6 432)</small></label>
-<label><input type="checkbox" data-c="p" checked> <b style="color:#29b6f6">●</b> Puits <small>(208)</small></label></div></div>
+<label><input type="checkbox" data-c="p" checked> <b style="color:#29b6f6">●</b> Puits <small>(208)</small></label>
+<label><input type="checkbox" data-c="e"> <b style="color:#c8e600;text-shadow:0 0 1px #000">◌</b> Effondrements / affaissements <small>(25 760)</small></label></div></div>
    <h5>Divers</h5>
    <div class="cou"><label><input id="bss" type="checkbox"> Points BRGM « Dossiers du sous-sol »</label></div>
    <div class="cou"><label><input id="aqu" type="checkbox"> Aqueducs et rigoles de Versailles</label><input id="aquo" class="op" type="range" min="0.1" max="1" step="0.05" value="1" title="Opacité"></div>
@@ -430,7 +431,11 @@ anCap.addEventListener('click',e=>{const r=map.getContainer().getBoundingClientR
 // ---------- Cavités France (BDCavité BRGM / Géorisques) ----------
 const CVF={c:['Carrière','#3cb043'],g:['Galerie','#111'],s:['Souterrain','#6a00ff'],m:['Ouvrage militaire','#5a0060'],p:['Puits','#29b6f6']};
 const cvfR=L.canvas({padding:.3});let cvfG=null;const cvfSub=[...document.querySelectorAll('#cvfsub input')];{const st=store.get('cvfsub',null);if(st)cvfSub.forEach(i=>i.checked=!!st[i.dataset.c])}
-function cvfMaj(){const on=document.getElementById('cvf').checked;store.set('cvfsub',Object.fromEntries(cvfSub.map(i=>[i.dataset.c,i.checked])));if(!cvfG)return;for(const i of cvfSub){const g=cvfG[i.dataset.c];on&&i.checked?g.addTo(map):map.removeLayer(g)}}
+let mvtG=null;async function mvtCharge(){if(mvtG)return;const b=await lire('mvt.json.gz');if(!b)return;const t=await new Response(new Blob([b]).stream().pipeThrough(new DecompressionStream('gzip'))).text();mvtG=L.layerGroup();
+ for(const [id,fia,date,lieu,cl,cm,lo,la] of JSON.parse(t)){const m=L.circleMarker([la,lo],{renderer:cvfR,radius:7,color:'#d4ff00',weight:2.5,dashArray:'3 3',fill:true,fillColor:'#d4ff00',fillOpacity:.15,bubblingMouseEvents:false});
+  m.bindPopup(()=>`<div style="font:13px system-ui;max-width:260px"><b style="color:#7a8f00">◌ Effondrement / affaissement</b><div style="margin:4px 0;color:#444">Le sol s'est effondré ou affaissé ici. Sans cavité connue autour, c'est souvent le signe d'une cavité inconnue en dessous.</div><div style="font-size:12px">${date?'Date : <b>'+new Date(date).toLocaleDateString('fr-FR')+'</b><br>':''}${fia?'Fiabilité : '+anEsc(fia)+'<br>':''}${lieu?'Lieu : '+anEsc(lieu)+'<br>':''}${cl?anEsc(cl)+'<br>':''}${cm?'Détail : '+anEsc(cm)+'<br>':''}<span style="color:#666">Identifiant : ${id}<br>${la.toFixed(6)}, ${lo.toFixed(6)}</span></div><div style="font-size:11px;color:#888;margin-top:5px">Source : BDMvt (BRGM / Géorisques)</div></div>`);mvtG.addLayer(m)}}
+async function cvfMaj(){const on=document.getElementById('cvf').checked;store.set('cvfsub',Object.fromEntries(cvfSub.map(i=>[i.dataset.c,i.checked])));
+ const e=cvfSub.find(i=>i.dataset.c==='e');if(on&&e.checked){await mvtCharge();mvtG&&mvtG.addTo(map)}else if(mvtG)map.removeLayer(mvtG);if(!cvfG)return;for(const i of cvfSub){const g=cvfG[i.dataset.c];if(!g)continue;on&&i.checked?g.addTo(map):map.removeLayer(g)}}
 async function cvfOn(){if(!cvfG){const b=await lire('cavites.json.gz');if(!b)return;const t=await new Response(new Blob([b]).stream().pipeThrough(new DecompressionStream('gzip'))).text();cvfG={};for(const c in CVF)cvfG[c]=L.layerGroup();
  for(const [id,c,nom,rep,lo,la] of JSON.parse(t)){const [lab,col]=CVF[c];const m=L.circleMarker([la,lo],{renderer:cvfR,radius:c==='g'||c==='p'?6:5,color:'#fff',weight:1,fillColor:col,fillOpacity:.95,bubblingMouseEvents:false});
   m.bindPopup(()=>`<div style="font:13px system-ui;max-width:250px"><b style="color:${col}">● ${lab}</b><div style="margin:4px 0">${anEsc(nom)||'<i>sans nom</i>'}</div><div style="font-size:12px;color:#555">${rep?'Repérage : '+anEsc(rep)+'<br>':''}Identifiant : ${id}<br>${la.toFixed(6)}, ${lo.toFixed(6)}</div><div style="font-size:11px;color:#888;margin-top:5px">Source : BDCavité (BRGM / Géorisques)</div></div>`);cvfG[c].addLayer(m)}}
