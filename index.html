@@ -10,19 +10,34 @@ html,body,#m{height:100%;margin:0}
 #p button:hover{background:#e8e8e8}#p button.on{background:#2a6;color:#fff;border-color:#2a6}
 .sec{border-top:1px solid #ddd;margin-top:7px;padding-top:6px}
 .sec h4{margin:0 0 4px;font-size:11px;text-transform:uppercase;color:#666;letter-spacing:.04em}
-.fonds{display:grid;gap:7px}
-.fond-item{padding:8px 9px;border:1px solid rgba(255,255,255,.65);background:rgba(255,255,255,.3);border-radius:10px}
-.fond-item.actif{border-color:rgba(30,130,85,.65);background:rgba(240,255,246,.5)}
-.fond-ligne{display:flex;align-items:center;justify-content:space-between;gap:6px}
-.fond-titre{display:flex;align-items:center;gap:4px;font-weight:500;cursor:pointer;min-width:0}
-.fond-titre input{flex:none;margin:0 5px 0 0}
-.fond-pct{color:#4c5660;font-size:11px;font-variant-numeric:tabular-nums;white-space:nowrap}
-.fond-slider{display:block;width:100%;box-sizing:border-box;margin:4px 0 1px;accent-color:#2a6}
-.fond-note{font-size:11px;color:#555;margin:6px 1px 4px}
-.fond-hist{border-left:2px solid rgba(40,100,150,.25);margin:5px 0 0 7px;padding-left:8px;display:grid;gap:5px}
-.fond-hist .fond-item{padding:6px 7px}
-.hist-options{margin:5px 0 0}
-.hist-options>summary{font-size:12px;color:#274e69;cursor:pointer;padding:5px 2px;list-style:revert}
+.fonds{display:grid;gap:2px}
+.fond-item{margin:1px 0;padding:0;background:none;border:0;border-radius:0}
+.fond-item.actif{background:none;border:0}
+.fond-ligne{display:flex;align-items:center;justify-content:space-between;gap:5px;min-height:21px}
+.fond-titre{display:flex;align-items:center;gap:0;font-weight:400;cursor:pointer;min-width:0;font-size:12px}
+.fond-titre input{flex:none;margin:1px 6px 1px 0}
+.fond-pct{color:#666;font-size:11px;font-variant-numeric:tabular-nums;white-space:nowrap;display:none}
+.fond-item.actif .fond-pct{display:inline}
+.fond-slider{display:none;width:calc(100% - 20px);box-sizing:border-box;height:14px;margin:0 0 3px 20px;accent-color:#2a6}
+.fond-item.actif .fond-slider{display:block}
+.fond-note{font-size:11px;color:#666;margin:4px 0 5px}
+.fond-hist{margin:1px 0 2px 10px;padding-left:9px;border-left:1px solid rgba(90,90,90,.22);display:grid;gap:1px}
+.fond-hist .fond-item{padding:0}
+.hist-options{margin:2px 0 1px 17px}
+.hist-options>summary{font-size:11px;color:#555;cursor:pointer;padding:2px 0}
+.rub{margin:0;padding:0}
+.rub>summary{display:flex;align-items:center;gap:6px;cursor:pointer;list-style:none;padding:8px 2px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#555;user-select:none}
+.rub>summary::-webkit-details-marker,.sousrub>summary::-webkit-details-marker{display:none}
+.rub>summary::before{content:'▸';font-size:12px;color:#777;flex:none}
+.rub[open]>summary::before{content:'▾'}
+.rub-body{padding:0 0 6px}
+.sousrub{margin:3px 0}
+.sousrub>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;list-style:none;padding:5px 1px;color:#666;font-size:11px;font-weight:600;user-select:none}
+.sousrub>summary::before{content:'▸';color:#888;flex:none}
+.sousrub[open]>summary::before{content:'▾'}
+.sousrub>summary>span:first-child{flex:1}
+.sousrub-body{padding:2px 0 5px 10px}
+#info:empty{display:none}
 .depbar{display:flex;gap:4px;margin:3px 0 4px 14px}.depbar button{font-size:11px;padding:1px 6px;border:1px solid #ccc;background:#f6f6f6;border-radius:4px;cursor:pointer}.depbar button:hover{background:#e8e8e8}
 .sec h5{margin:7px 0 2px;font-size:10.5px;font-weight:600;color:#888}
 .opf{font-size:12px;color:#666;display:flex;align-items:center;gap:6px;margin:2px 0 2px}
@@ -80,7 +95,7 @@ details.dep>summary{background:rgba(255,255,255,.38)!important}
 #p button{font-size:14px;padding:6px 10px;border-radius:6px}
 .depbar button{font-size:13px;padding:5px 9px}
 #p input[type=checkbox]{width:20px;height:20px;vertical-align:-4px;margin:2px 6px 2px 0}
-.fonds{gap:8px}.fond-titre,.cou label{padding:4px 0}.fond-hist{padding-left:7px}
+.fonds{gap:2px}.fond-titre,.cou label{padding:2px 0}.fond-hist{padding-left:7px}.fond-slider{height:22px}.rub>summary{padding:10px 2px;font-size:12px}.sousrub>summary{padding:8px 1px;font-size:12px}
 input.op,.plan input[type=range]{height:26px;max-width:none}
 .plan{grid-template-columns:26px 1fr auto auto;gap:6px;margin:6px 0 6px 2px}
 details.dep>summary{padding:9px 8px;font-size:15px}
@@ -157,6 +172,74 @@ details.dep>summary{padding:9px 8px;font-size:15px}
 <script>
 const g=(l,s,f)=>`https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=${l}&STYLE=${s}&FORMAT=${f}&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}`;
 const store={get(k,d){try{const v=localStorage.getItem('map2_'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('map2_'+k,JSON.stringify(v))}catch(e){}}};
+// ---------- menus repliables : conserve chaque contrôle et ses identifiants ----------
+function initialiserMenusRepliables(){
+ const corps=document.getElementById('corps');
+ const config=[
+  ['recherche',false],
+  ['fonds',true],
+  ['plans',false],
+  ['outils',false]
+ ];
+ const sections=[...corps.querySelectorAll(':scope > .sec')];
+ if(sections.length!==config.length)throw new Error('Sections du menu non reconnues');
+ sections.forEach((section,i)=>{
+  const [id,ouvert]=config[i],titre=section.querySelector(':scope > h4');
+  if(!titre)throw new Error('Titre de rubrique manquant : '+id);
+  const details=document.createElement('details');
+  details.className='sec rub';
+  details.id='rub-'+id;
+  const summary=document.createElement('summary');
+  summary.className='rub-titre';
+  summary.append(...[...titre.childNodes]);
+  const contenu=document.createElement('div');
+  contenu.className='rub-body';
+  titre.remove();
+  while(section.firstChild)contenu.appendChild(section.firstChild);
+  details.append(summary,contenu);
+  section.replaceWith(details);
+  details.open=!!store.get('rub_'+id,ouvert);
+  details.addEventListener('toggle',()=>store.set('rub_'+id,details.open));
+ });
+ const fondBody=document.querySelector('#rub-fonds > .rub-body');
+ const noms=['annotations','cadastre','carrieres','divers'];
+ let sousCorps=null,index=0;
+ for(const enfant of [...fondBody.childNodes]){
+  if(enfant.nodeType===1&&enfant.matches('h5')){
+   const id=noms[index++];
+   if(!id)throw new Error('Sous-rubrique non reconnue');
+   const details=document.createElement('details');
+   details.className='sousrub';
+   details.id='sousrub-'+id;
+   const summary=document.createElement('summary');
+   const label=document.createElement('span');
+   label.textContent=enfant.firstChild?.textContent?.trim()||enfant.textContent.trim();
+   summary.appendChild(label);
+   // Le bouton + des annotations reste directement accessible, même rubrique fermée.
+   if(id==='annotations'){
+    const action=enfant.querySelector('#anAdd');
+    if(action){
+     action.addEventListener('click',e=>{e.preventDefault();e.stopPropagation()});
+     const place=document.createElement('span');place.appendChild(action);
+     summary.appendChild(place);
+    }
+   }
+   const body=document.createElement('div');
+   body.className='sousrub-body';
+   details.append(summary,body);
+   enfant.remove();
+   fondBody.appendChild(details);
+   details.open=!!store.get('sousrub_'+id,false);
+   details.addEventListener('toggle',()=>store.set('sousrub_'+id,details.open));
+   sousCorps=body;
+  }else if(sousCorps)sousCorps.appendChild(enfant);
+ }
+ if(index!==noms.length)throw new Error('Sous-rubriques incomplètes');
+ // Les messages d'état doivent rester visibles même quand « Outils » est replié.
+ const infos=document.getElementById('info');
+ if(infos)corps.appendChild(infos);
+}
+initialiserMenusRepliables();
 const map=L.map('m',{zoomControl:true,maxZoom:22,zoomSnap:0.5,wheelPxPerZoomLevel:90});
 map.createPane('plans').style.zIndex=250;map.createPane('cadp').style.zIndex=300;map.createPane('cont').style.zIndex=350;
 const fondOpt={maxZoom:22,maxNativeZoom:18,keepBuffer:1,updateWhenZooming:false};
@@ -225,7 +308,7 @@ const fondsCont=document.getElementById('fonds');
 const satelliteRow=fondElement('o','🛰️ Satellite IGN',fondsCont);
 fondsReg.set('o',B.o);
 const histOptions=document.createElement('details');histOptions.className='hist-options';
-histOptions.open=store.get('hist_ouvert',true);
+histOptions.open=store.get('hist_ouvert',false);
 const histTitre=document.createElement('summary');histTitre.textContent='🕰️ Photos aériennes historiques';
 const histList=document.createElement('div');histList.className='fond-hist';
 histOptions.append(histTitre,histList);satelliteRow.appendChild(histOptions);
