@@ -10,7 +10,19 @@ html,body,#m{height:100%;margin:0}
 #p button:hover{background:#e8e8e8}#p button.on{background:#2a6;color:#fff;border-color:#2a6}
 .sec{border-top:1px solid #ddd;margin-top:7px;padding-top:6px}
 .sec h4{margin:0 0 4px;font-size:11px;text-transform:uppercase;color:#666;letter-spacing:.04em}
-.fonds{display:grid;grid-template-columns:1fr 1fr;gap:1px 6px}.fonds label{margin:1px 0}
+.fonds{display:grid;gap:7px}
+.fond-item{padding:8px 9px;border:1px solid rgba(255,255,255,.65);background:rgba(255,255,255,.3);border-radius:10px}
+.fond-item.actif{border-color:rgba(30,130,85,.65);background:rgba(240,255,246,.5)}
+.fond-ligne{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.fond-titre{display:flex;align-items:center;gap:4px;font-weight:500;cursor:pointer;min-width:0}
+.fond-titre input{flex:none;margin:0 5px 0 0}
+.fond-pct{color:#4c5660;font-size:11px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.fond-slider{display:block;width:100%;box-sizing:border-box;margin:4px 0 1px;accent-color:#2a6}
+.fond-note{font-size:11px;color:#555;margin:6px 1px 4px}
+.fond-hist{border-left:2px solid rgba(40,100,150,.25);margin:5px 0 0 7px;padding-left:8px;display:grid;gap:5px}
+.fond-hist .fond-item{padding:6px 7px}
+.hist-options{margin:5px 0 0}
+.hist-options>summary{font-size:12px;color:#274e69;cursor:pointer;padding:5px 2px;list-style:revert}
 .depbar{display:flex;gap:4px;margin:3px 0 4px 14px}.depbar button{font-size:11px;padding:1px 6px;border:1px solid #ccc;background:#f6f6f6;border-radius:4px;cursor:pointer}.depbar button:hover{background:#e8e8e8}
 .sec h5{margin:7px 0 2px;font-size:10.5px;font-weight:600;color:#888}
 .opf{font-size:12px;color:#666;display:flex;align-items:center;gap:6px;margin:2px 0 2px}
@@ -41,10 +53,6 @@ details.dep>summary:before{content:'▸ ';color:#888}details.dep[open]>summary:b
 #lock input[type=password]{width:100%;box-sizing:border-box;font:16px monospace;padding:8px;border:1px solid #aaa;border-radius:6px;letter-spacing:.05em}
 #lock button{margin-top:10px;width:100%;padding:8px;font:600 14px system-ui;background:#2a6;color:#fff;border:0;border-radius:6px;cursor:pointer}
 #lock .err{color:#c00;min-height:18px;font-size:13px;margin-top:6px}
-#rlt{margin:5px 0 3px;padding:6px;background:#f4f7f5;border-radius:6px}.tl-lab{font-size:11px;color:#666;margin-bottom:4px}
-#chips{display:flex;gap:4px;overflow-x:auto;padding-bottom:3px;scrollbar-width:thin}
-#chips button{flex:0 0 auto;border-radius:12px!important;padding:2px 9px!important;white-space:nowrap}
-#chips button.on{background:#2a6;color:#fff;border-color:#2a6}#epqc{margin-top:5px;width:100%}
 #adjB{position:absolute;z-index:1400;left:10px;bottom:28px;display:none;border:1px solid rgba(255,255,255,.8);border-radius:999px;padding:9px 14px;font:600 13px system-ui;cursor:pointer;background:linear-gradient(135deg,rgba(255,255,255,.8),rgba(255,255,255,.55));-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:0 6px 24px rgba(0,0,0,.25)}
 #adjP{position:absolute;z-index:1500;left:10px;bottom:28px;width:min(330px,calc(100% - 20px));display:none;padding:12px 14px;font:13px system-ui;border-radius:20px;background:linear-gradient(135deg,rgba(255,255,255,.8),rgba(255,255,255,.55));-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.7);box-shadow:0 10px 40px rgba(0,0,0,.3)}
 #adjP .r{display:flex;align-items:center;gap:5px;margin:6px 0}#adjP .r b{width:86px;flex:none}#adjP .r span{min-width:62px;text-align:center;font-variant-numeric:tabular-nums}
@@ -62,17 +70,17 @@ details.dep>summary:before{content:'▸ ';color:#888}details.dep[open]>summary:b
 #p{background:linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.32));-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%);border:1px solid rgba(255,255,255,.65);border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(255,255,255,.25)}
 #p button,.depbar button{background:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.7);box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
 #p button:hover{background:rgba(255,255,255,.7)}
-details.dep>summary,#rlt{background:rgba(255,255,255,.38)!important}
+details.dep>summary{background:rgba(255,255,255,.38)!important}
 .sec{border-top:1px solid rgba(255,255,255,.55)}
-#filtre,#rech input,#epq{background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.75)}
+#filtre,#rech input{background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.75)}
 #bulle{position:absolute;z-index:1001;left:50%;transform:translateX(-50%);top:10px;background:#fff;border-radius:16px;padding:6px 12px;font:600 14px system-ui;box-shadow:0 1px 6px #0006;display:none;max-width:80vw;text-align:center}
 @media (max-width:640px){
 #p{top:auto;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom));width:auto;max-height:62vh;font-size:15px;padding:8px 12px;border-radius:14px 14px 10px 10px;box-shadow:0 -2px 12px #0005}
 #tete{min-height:36px;position:sticky;top:-8px;background:rgba(255,255,255,.35);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);z-index:2;margin:-8px -12px 0;padding:8px 12px}#tete b{font-size:16px}#pli{font-size:20px!important;padding:4px 14px!important}
 #p button{font-size:14px;padding:6px 10px;border-radius:6px}
 .depbar button{font-size:13px;padding:5px 9px}
-#p input[type=checkbox],#p input[type=radio]{width:20px;height:20px;vertical-align:-4px;margin:2px 6px 2px 0}
-.fonds{gap:4px 8px}.fonds label,.cou label{padding:4px 0}
+#p input[type=checkbox]{width:20px;height:20px;vertical-align:-4px;margin:2px 6px 2px 0}
+.fonds{gap:8px}.fond-titre,.cou label{padding:4px 0}.fond-hist{padding-left:7px}
 input.op,.plan input[type=range]{height:26px;max-width:none}
 .plan{grid-template-columns:26px 1fr auto auto;gap:6px;margin:6px 0 6px 2px}
 details.dep>summary{padding:9px 8px;font-size:15px}
@@ -103,14 +111,9 @@ details.dep>summary{padding:9px 8px;font-size:15px}
  <div id="corps">
   <div class="sec"><h4>Rechercher un lieu</h4>
    <div id="rech"><input id="q" placeholder="Adresse, lieu, commune…"><button id="go">🔍</button></div><div id="res"></div></div>
-  <div class="sec"><h4>Fond de carte</h4><div class="fonds">
-   <label><input type="radio" name="b" value="o" checked> Satellite</label>
-   <label><input type="radio" name="b" value="t"> Carte IGN</label>
-   <label><input type="radio" name="b" value="p"> OSM</label>
-   <label><input type="radio" name="b" value="l"> Relief LiDAR</label>
-      <label><input type="radio" name="b" value="w"> Fond blanc</label></div>
-   <div id="rlt"><div class="tl-lab">🕰️ Remonter le temps</div><div id="chips"></div><button id="epqc" style="display:none">⇔ Comparer avec aujourd'hui</button></div>
-   <div class="opf">Opacité <input id="fondo" class="op" type="range" min="0.1" max="1" step="0.05" value="1" title="Opacité du fond"></div>
+  <div class="sec"><h4>Fonds de carte</h4>
+   <div id="fonds" class="fonds"></div>
+   <div class="fond-note">Active plusieurs fonds et règle leur transparence. Le dernier fond activé s'affiche au-dessus des autres.</div>
    <h5 style="display:flex;align-items:center;justify-content:space-between">Annotations <span><button id="anAdd" title="Ajouter un point (puis touche la carte)" style="font-size:15px;line-height:1;padding:1px 8px">＋</button></span></h5>
    <div id="anList" style="font-size:12.5px"></div>
    <h5>Cadastre et limites</h5>
@@ -157,13 +160,81 @@ const store={get(k,d){try{const v=localStorage.getItem('map2_'+k);return v===nul
 const map=L.map('m',{zoomControl:true,maxZoom:22,zoomSnap:0.5,wheelPxPerZoomLevel:90});
 map.createPane('plans').style.zIndex=250;map.createPane('cadp').style.zIndex=300;map.createPane('cont').style.zIndex=350;
 const fondOpt={maxZoom:22,maxNativeZoom:18,keepBuffer:1,updateWhenZooming:false};
-const B={o:L.tileLayer(g('ORTHOIMAGERY.ORTHOPHOTOS','normal','image/jpeg'),{...fondOpt,maxNativeZoom:19,attribution:'IGN'}),
-t:L.tileLayer(g('GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2','normal','image/png'),{...fondOpt,maxNativeZoom:19,attribution:'IGN'}),
-l:L.tileLayer(g('IGNF_LIDAR-HD_MNT_ELEVATION.ELEVATIONGRIDCOVERAGE.SHADOW','normal','image/png'),{...fondOpt,attribution:'IGN'}),
-p:L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{...fondOpt,maxNativeZoom:19,attribution:'© OpenStreetMap'}),
-w:L.tileLayer('data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',{maxZoom:22})};
-let fond=store.get('fond','o');if(!B[fond])fond='o';B[fond].addTo(map);
-document.querySelectorAll('[name=b]').forEach(r=>{r.checked=r.value===fond;r.onchange=()=>{Object.values(B).forEach(x=>map.removeLayer(x));B[r.value].addTo(map);store.set('fond',r.value)}});
+const B={
+ o:L.tileLayer(g('ORTHOIMAGERY.ORTHOPHOTOS','normal','image/jpeg'),{...fondOpt,maxNativeZoom:19,attribution:'IGN'}),
+ t:L.tileLayer(g('GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2','normal','image/png'),{...fondOpt,maxNativeZoom:19,attribution:'IGN'}),
+ l:L.tileLayer(g('IGNF_LIDAR-HD_MNT_ELEVATION.ELEVATIONGRIDCOVERAGE.SHADOW','normal','image/png'),{...fondOpt,attribution:'IGN'}),
+ p:L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{...fondOpt,maxNativeZoom:19,attribution:'© OpenStreetMap'}),
+ w:L.tileLayer('data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',{...fondOpt})
+};
+// Conserve les préférences de l'ancienne interface radio lors du premier chargement.
+const anciennesCouches=store.get('fonds_actifs',null);
+const ancienFond=store.get('fond','o');
+const fondsActifs=new Set(Array.isArray(anciennesCouches)?anciennesCouches:[B[ancienFond]?ancienFond:'o']);
+if(!Array.isArray(anciennesCouches)&&store.get('epq2',''))fondsActifs.add('h:'+store.get('epq2',''));
+let fondsOrdre=store.get('fonds_ordre',[]);
+if(!Array.isArray(fondsOrdre))fondsOrdre=[];
+const fondsReg=new Map(),fondsUI=new Map();
+function fondOp(id){
+ const old=id===ancienFond||id==='h:'+store.get('epq2','')?store.get('fondo',1):1;
+ const v=Number(store.get('fond_op_'+id,old));
+ return Number.isFinite(v)?Math.max(0,Math.min(1,v)):1;
+}
+function fondSync(){
+ fondsOrdre=fondsOrdre.filter(id=>fondsActifs.has(id));
+ fondsActifs.forEach(id=>{if(!fondsOrdre.includes(id))fondsOrdre.push(id)});
+ fondsReg.forEach((ly,id)=>{
+  if(fondsActifs.has(id)){if(!map.hasLayer(ly))ly.addTo(map)}
+  else if(map.hasLayer(ly))map.removeLayer(ly);
+ });
+ fondsOrdre.forEach((id,i)=>{const ly=fondsReg.get(id);if(ly){ly.setZIndex(100+i);ly.setOpacity(fondOp(id))}});
+ fondsUI.forEach((row,id)=>{
+  row.classList.toggle('actif',fondsActifs.has(id));
+  row.querySelector('input[type=checkbox]').checked=fondsActifs.has(id);
+ });
+ store.set('fonds_actifs',[...fondsActifs]);store.set('fonds_ordre',fondsOrdre);
+}
+function fondElement(id,titre,container){
+ const row=document.createElement('div');row.className='fond-item';
+ const ligne=document.createElement('div');ligne.className='fond-ligne';
+ const lab=document.createElement('label');lab.className='fond-titre';
+ const cb=document.createElement('input');cb.type='checkbox';cb.checked=fondsActifs.has(id);
+ const nom=document.createElement('span');nom.textContent=titre;lab.append(cb,nom);
+ const pct=document.createElement('span');pct.className='fond-pct';
+ const slider=document.createElement('input');slider.type='range';slider.className='fond-slider';
+ slider.min='0';slider.max='1';slider.step='0.05';slider.value=String(fondOp(id));
+ slider.setAttribute('aria-label','Opacité '+titre);
+ pct.textContent=Math.round(fondOp(id)*100)+' %';
+ cb.onchange=()=>{
+  if(cb.checked){fondsActifs.add(id);fondsOrdre=fondsOrdre.filter(x=>x!==id);fondsOrdre.push(id)}
+  else fondsActifs.delete(id);
+  fondSync();
+ };
+ slider.oninput=()=>{
+  const v=Number(slider.value);pct.textContent=Math.round(v*100)+' %';
+  store.set('fond_op_'+id,v);const layer=fondsReg.get(id);if(layer)layer.setOpacity(v);
+ };
+ ligne.append(lab,pct);row.append(ligne,slider);container.appendChild(row);
+ fondsUI.set(id,row);row.classList.toggle('actif',fondsActifs.has(id));
+ return row;
+}
+function fondAjouter(id,nom,layer,container){
+ fondsReg.set(id,layer);fondElement(id,nom,container);fondSync();
+}
+const fondsCont=document.getElementById('fonds');
+const satelliteRow=fondElement('o','🛰️ Satellite IGN',fondsCont);
+fondsReg.set('o',B.o);
+const histOptions=document.createElement('details');histOptions.className='hist-options';
+histOptions.open=store.get('hist_ouvert',true);
+const histTitre=document.createElement('summary');histTitre.textContent='🕰️ Photos aériennes historiques';
+const histList=document.createElement('div');histList.className='fond-hist';
+histOptions.append(histTitre,histList);satelliteRow.appendChild(histOptions);
+histOptions.addEventListener('toggle',()=>store.set('hist_ouvert',histOptions.open));
+fondAjouter('t','🗺️ Carte IGN',B.t,fondsCont);
+fondAjouter('p','🌍 OpenStreetMap',B.p,fondsCont);
+fondAjouter('l','🏔️ Relief LiDAR HD',B.l,fondsCont);
+fondAjouter('w','⬜ Fond blanc',B.w,fondsCont);
+fondSync();
 
 const cd=L.tileLayer(g('CADASTRALPARCELS.PARCELS','bdparcellaire_o','image/png'),{maxZoom:22,maxNativeZoom:19,pane:'cadp',keepBuffer:1});
 const cadCb=document.getElementById('cad');cadCb.checked=store.get('cad',false);if(cadCb.checked)cd.addTo(map);
@@ -240,7 +311,6 @@ function majOp(){document.querySelectorAll('.cou').forEach(d=>{const c=d.querySe
 document.querySelectorAll('.cou input[type=checkbox]').forEach(c=>c.addEventListener('change',majOp));majOp();
 function opV(id,d=1){return +(store.get(id,d))}
 const opApply={
- fondo:v=>Object.values(B).forEach(x=>x.setOpacity?x.setOpacity(v):x.eachLayer(l=>l.setOpacity(v*(l.options.op0||1)))),
  cado:v=>cd.setOpacity(v),
  cad2o:v=>ch.setOpacity(v*0.8),
  admo:v=>{adR.setOpacity(v);adV.setStyle({opacity:.95*v})},
@@ -490,29 +560,49 @@ async function cvfOn(){if(!cvfG){await infoCharge();const b=await lire('cavites.
   m.bindPopup(()=>`<div style="font:13px system-ui;max-width:250px"><b style="color:${col}">● ${lab}</b><div style="margin:4px 0">${anEsc(nom)||'<i>sans nom</i>'}</div><div style="font-size:12px;color:#555">${rep?'Repérage : '+anEsc(rep)+'<br>':''}Identifiant : ${id}<br>${la.toFixed(6)}, ${lo.toFixed(6)}</div>${infoPied(id,ins,nom,lab,'BDCavité (BRGM / Géorisques)')}</div>`);cvfG[c].addLayer(m)}}
  cvfMaj()}
 const cvfCb=document.getElementById('cvf');cvfCb.checked=store.get('cvf',false);cvfCb.onchange=e=>{store.set('cvf',e.target.checked);e.target.checked?cvfOn():cvfMaj()};cvfSub.forEach(i=>i.onchange=cvfMaj);
-// ---------- Remonter le temps ----------
-map.createPane('epoq').style.zIndex=220;
-let EPQ=[['','Aujourd\'hui'],['ORTHOIMAGERY.ORTHOPHOTOS2011-2015','2011-15','normal','image/jpeg'],['ORTHOIMAGERY.ORTHOPHOTOS2006-2010','2006-10','normal','image/jpeg'],['ORTHOIMAGERY.ORTHOPHOTOS2000-2005','2000-05','normal','image/jpeg'],['ORTHOIMAGERY.ORTHOPHOTOS.1950-1965','1950-65','normal','image/png']];
-const chips=document.getElementById('chips'),epqC=document.getElementById('epqc'),rlt=document.getElementById('rlt');let epqL=null,epqV=store.get('epq2','');
-function dessineChips(){chips.innerHTML='';EPQ.forEach(e=>{const b=document.createElement('button');b.textContent=e[1];b.className=e[0]===epqV?'on':'';b.onclick=()=>choisirEpq(e[0]);chips.appendChild(b)})}
-function choisirEpq(v){epqV=v;store.set('epq2',v);if(epqL){map.removeLayer(epqL);epqL=null}
- const e=EPQ.find(x=>x[0]===v);if(v&&e&&fond==='o'){epqL=L.tileLayer(g(e[0],e[2],e[3]),{maxZoom:22,maxNativeZoom:18,pane:'epoq',keepBuffer:1,opacity:+document.getElementById('fondo').value,attribution:'IGN – Remonter le temps'}).addTo(map)}
- epqC.style.display=epqL?'block':'none';if(!epqL&&typeof ridCible!=='undefined'&&ridCible==='epoq'&&ridX!==null)arretRid();dessineChips()}
-function majRlt(){rlt.style.display=fond==='o'?'block':'none';choisirEpq(epqV)}
-document.querySelectorAll('[name=b]').forEach(r=>r.addEventListener('change',()=>{fond=r.value;majRlt()}));
-document.getElementById('fondo').addEventListener('input',e=>{epqL&&epqL.setOpacity(+e.target.value)});
-(async()=>{try{const t=await fetch('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetCapabilities').then(r=>r.text());const x=new DOMParser().parseFromString(t,'text/xml');const out=[];
- for(const ly of x.getElementsByTagName('Layer')){const id=ly.getElementsByTagName('ows:Identifier')[0]?.textContent||'';const m=id.match(/^ORTHOIMAGERY\.ORTHOPHOTOS\.?(\d{4})-(\d{4})$/);if(!m||m[1]==='1965')continue;
+// ---------- photos historiques : sous-options du satellite ----------
+let EPQ=[
+ ['ORTHOIMAGERY.ORTHOPHOTOS2011-2015','2011–2015','normal','image/jpeg'],
+ ['ORTHOIMAGERY.ORTHOPHOTOS2006-2010','2006–2010','normal','image/jpeg'],
+ ['ORTHOIMAGERY.ORTHOPHOTOS2000-2005','2000–2005','normal','image/jpeg'],
+ ['ORTHOIMAGERY.ORTHOPHOTOS.1950-1965','1950–1965','normal','image/png']
+];
+function histAfficher(){
+ for(const e of EPQ){
+  const id='h:'+e[0];
+  if(!fondsReg.has(id)){
+   fondAjouter(id,'📷 '+e[1],L.tileLayer(g(e[0],e[2],e[3]),{...fondOpt,maxNativeZoom:18,attribution:'IGN – Remonter le temps'}),histList);
+  }
+  histList.appendChild(fondsUI.get(id));
+ }
+}
+histAfficher();
+(async()=>{try{
+ const r=await fetch('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetCapabilities');
+ if(!r.ok)return;
+ const x=new DOMParser().parseFromString(await r.text(),'text/xml'),out=[];
+ for(const ly of x.getElementsByTagName('Layer')){
+  const id=ly.getElementsByTagName('ows:Identifier')[0]?.textContent||'';
+  const m=id.match(/^ORTHOIMAGERY\.ORTHOPHOTOS\.?(\d{4})-(\d{4})$/);
+  if(!m||m[1]==='1965')continue;
   if(![...ly.getElementsByTagName('TileMatrixSet')].some(e=>e.textContent==='PM'))continue;
-  out.push([id,m[1]+'-'+m[2].slice(2),ly.getElementsByTagName('Style')[0]?.getElementsByTagName('ows:Identifier')[0]?.textContent||'normal',ly.getElementsByTagName('Format')[0]?.textContent||'image/jpeg'])}
- if(out.length){out.sort((a,b)=>b[0].match(/\d{4}/)[0]-a[0].match(/\d{4}/)[0]);EPQ=[EPQ[0],...out];dessineChips()}}catch(e){}})();
+  out.push([id,m[1]+'–'+m[2],ly.getElementsByTagName('Style')[0]?.getElementsByTagName('ows:Identifier')[0]?.textContent||'normal',ly.getElementsByTagName('Format')[0]?.textContent||'image/jpeg']);
+ }
+ if(out.length){
+  const all=new Map(EPQ.map(e=>[e[0],e]));
+  out.forEach(e=>all.set(e[0],e));
+  EPQ=[...all.values()].sort((a,b)=>Number(b[1].slice(0,4))-Number(a[1].slice(0,4)));
+  histAfficher();
+ }
+}catch(e){console.warn('Photos aériennes historiques indisponibles',e)}})();
 // ---------- rideau ----------
-const rid=document.getElementById('rideau'),bRid=document.getElementById('bRid');let pane=map.getPane('plans'),ridCible='plans';let ridX=null;
-function clip(){if(ridX===null){pane.style.clip='';return}const nw=map.containerPointToLayerPoint([0,0]),se=map.containerPointToLayerPoint(map.getSize()),cx=map.containerPointToLayerPoint([ridX,0]).x;pane.style.clip=`rect(${nw.y}px,${cx}px,${se.y}px,${nw.x}px)`;rid.style.left=ridX+'px'}
-function arretRid(){ridX=null;clip();pane.style.clip='';rid.style.display='none';bRid.classList.remove('on');document.getElementById('epqc').classList.remove('on')}
-function lanceRid(cible){if(ridX!==null){const meme=ridCible===cible;arretRid();if(meme)return}ridCible=cible;pane=map.getPane(cible);ridX=map.getSize().x/2;rid.style.display='block';(cible==='epoq'?document.getElementById('epqc'):bRid).classList.add('on');
- info.textContent=cible==='epoq'?'Glisse la barre : passé à gauche, aujourd\'hui à droite.':'Plans à gauche de la barre, fond seul à droite.';plier();clip()}
-bRid.onclick=()=>lanceRid('plans');epqC.onclick=()=>lanceRid('epoq');majRlt();
+const rid=document.getElementById('rideau'),bRid=document.getElementById('bRid');
+const pane=map.getPane('plans');let ridX=null;
+function clip(){if(ridX===null){pane.style.clip='';return}const nw=map.containerPointToLayerPoint([0,0]),se=map.containerPointToLayerPoint(map.getSize()),cx=map.containerPointToLayerPoint([ridX,0]).x;pane.style.clip='rect('+nw.y+'px,'+cx+'px,'+se.y+'px,'+nw.x+'px)';rid.style.left=ridX+'px'}
+function arretRid(){ridX=null;pane.style.clip='';rid.style.display='none';bRid.classList.remove('on')}
+function lanceRid(){if(ridX!==null){arretRid();return}ridX=map.getSize().x/2;rid.style.display='block';bRid.classList.add('on');
+ info.textContent='Plans à gauche de la barre, fonds de carte à droite.';plier();clip()}
+bRid.onclick=lanceRid;
 map.on('move zoom resize viewreset zoomend',clip);
 let drag=false;const dep=e=>{if(!drag)return;const x=(e.touches?e.touches[0].clientX:e.clientX)-map.getContainer().getBoundingClientRect().left;ridX=Math.max(0,Math.min(map.getSize().x,x));clip();e.preventDefault()};
 rid.addEventListener('mousedown',e=>{drag=true;e.preventDefault()});rid.addEventListener('touchstart',e=>{drag=true;e.preventDefault()},{passive:false});
