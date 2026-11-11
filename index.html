@@ -48,9 +48,9 @@ details.dep{margin:2px 0;border-radius:5px}
 details.dep>summary{cursor:pointer;padding:3px 4px;font-weight:600;background:#f3f3f3;border-radius:5px;list-style:none;display:flex;justify-content:space-between}
 details.dep>summary::-webkit-details-marker{display:none}
 details.dep>summary:before{content:'▸ ';color:#888}details.dep[open]>summary:before{content:'▾ '}
-.plan{display:grid;grid-template-columns:18px 1fr auto auto;align-items:center;gap:4px;margin:3px 0 3px 6px}
-.plan .nom{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}.plan .nom:hover{text-decoration:underline}
-.plan input[type=range]{grid-column:2/5;width:100%;height:14px;margin:0;display:none}.plan.actif input[type=range]{display:block}
+.plan{display:grid;grid-template-columns:18px 1fr auto auto auto;align-items:center;gap:4px;margin:3px 0 3px 6px}
+.plan .aj{padding:2px 5px;border:1px solid #ccd;background:#fff;border-radius:7px;cursor:pointer;font-size:12px}.plan .aj.lk{background:#fff4d6}.plan .nom{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}.plan .nom:hover{text-decoration:underline}
+.plan input[type=range]{grid-column:2/7;width:100%;height:14px;margin:0;display:none}.plan.actif input[type=range]{display:block}
 .badge{font-size:11px;cursor:help}
 #filtre{width:100%;box-sizing:border-box;font:12px system-ui;padding:3px 5px;border:1px solid #bbb;border-radius:4px;margin-bottom:4px}
 #rech{display:flex;gap:4px}#rech input{flex:1;min-width:0;font:12px system-ui;padding:3px 5px;border:1px solid #bbb;border-radius:4px}
@@ -97,7 +97,7 @@ details.dep>summary{background:rgba(255,255,255,.38)!important}
 #p input[type=checkbox]{width:20px;height:20px;vertical-align:-4px;margin:2px 6px 2px 0}
 .fonds{gap:2px}.fond-titre,.cou label{padding:2px 0}.fond-hist{padding-left:7px}.fond-slider{height:22px}.rub>summary{padding:10px 2px;font-size:12px}.sousrub>summary{padding:8px 1px;font-size:12px}
 input.op,.plan input[type=range]{height:26px;max-width:none}
-.plan{grid-template-columns:26px 1fr auto auto;gap:6px;margin:6px 0 6px 2px}
+.plan{grid-template-columns:26px 1fr auto auto auto;gap:6px;margin:6px 0 6px 2px}
 details.dep>summary{padding:9px 8px;font-size:15px}
 #filtre,#rech input{font-size:16px;padding:7px 8px}
 .sec h4{font-size:12px}.sec h5{font-size:12px}
@@ -120,7 +120,7 @@ details.dep>summary{padding:9px 8px;font-size:15px}
 <div class="r"><b>Rotation</b><button data-a="r" data-v="-2">⟲2°</button><button data-a="r" data-v="-0.2">⟲</button><span id="adjR"></span><button data-a="r" data-v="0.2">⟳</button><button data-a="r" data-v="2">2°⟳</button></div>
 <div class="r"><b>Taille</b><button data-a="s" data-v="-2">−2%</button><button data-a="s" data-v="-0.2">−</button><span id="adjS"></span><button data-a="s" data-v="0.2">+</button><button data-a="s" data-v="2">+2%</button></div>
 <div class="r"><b>Fin (50 cm)</b><button data-a="x" data-v="-1">←</button><button data-a="y" data-v="1">↑</button><button data-a="y" data-v="-1">↓</button><button data-a="x" data-v="1">→</button></div>
-<div class="g"><button class="ok" id="adjOk">✔ Enregistrer</button><button id="adjNo">Annuler</button><button id="adjDef">Calage d'origine</button><button id="adjCp">📋 Copier pour Claude</button></div><div id="adjMsg" style="font-size:11px;color:#1a7f37;margin-top:5px"></div></div><div id="fiche"><div id="fh"><b id="ft">Fiche BRGM</b><a id="fo" target="_blank" rel="noopener">↗ Onglet</a><button id="fx">✕</button></div><div id="fi"></div></div><div id="bulle"></div><div id="rideau"><span>⇔</span></div>
+<div class="g"><button class="ok" id="adjOk">✔ Enregistrer</button><button id="adjNo">Annuler</button><button id="adjDef">Calage d'origine</button><button id="adjCp">📋 Copier pour Claude</button><button id="adjLk">🔒 Enregistrer + verrouiller</button></div><div id="adjMsg" style="font-size:11px;color:#1a7f37;margin-top:5px"></div></div><div id="fiche"><div id="fh"><b id="ft">Fiche BRGM</b><a id="fo" target="_blank" rel="noopener">↗ Onglet</a><button id="fx">✕</button></div><div id="fi"></div></div><div id="bulle"></div><div id="rideau"><span>⇔</span></div>
 <div id="p">
  <div id="tete"><b>Atlas</b><button id="pli" title="Replier / déplier le menu">☰</button></div>
  <div id="corps">
@@ -444,20 +444,46 @@ const AdjL=L.Layer.extend({initialize(p,op){this.p=p;this.op=op;this.img=null},
   const g=c.getContext('2d');g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,c.width,c.height);if(!this.img)return;
   const p=this.p,cp=m.latLngToContainerPoint(p.c),k=p.m*256*Math.pow(2,m.getZoom())/40075016.68557849,a=p.r*Math.PI/180,co=Math.cos(a)*k*d,si=Math.sin(a)*k*d;
   g.globalAlpha=this.op;g.imageSmoothingQuality='high';g.setTransform(co,si,-si,co,cp.x*d,cp.y*d);g.drawImage(this.img,-this.img.width/2,-this.img.height/2)}});
+const MC=40075016.68557849,mER=ll=>[ll[1]*Math.PI/180*6378137,Math.log(Math.tan(Math.PI/4+ll[0]*Math.PI/360))*6378137];
+const TAdjL=L.Layer.extend({initialize(pl,p,op){this.pl=pl;this.p=p;this.op=op;this.cache={}},
+ onAdd(m){this._m=m;const c=this._c=L.DomUtil.create('canvas','leaflet-zoom-hide');c.style.position='absolute';c.style.pointerEvents='none';m.getPane('plans').appendChild(c);m.on('move zoomend viewreset resize',this.redraw,this);this.redraw()},
+ onRemove(m){this._c.remove();m.off('move zoomend viewreset resize',this.redraw,this);this._m=null},
+ setOpacity(o){this.op=o;this.redraw()},
+ tuile(k){const t=this.cache[k];if(t!==undefined)return t;this.cache[k]=null;lire(k).then(b=>b&&createImageBitmap(new Blob([b],{type:'image/webp'}))).then(im=>{if(im){this.cache[k]=im;this._rd||(this._rd=requestAnimationFrame(()=>{this._rd=0;this.redraw()}))}else this.cache[k]=false}).catch(()=>{this.cache[k]=false});return null},
+ redraw(){const m=this._m,c=this._c;if(!m||!c)return;const sz=m.getSize(),dp=window.devicePixelRatio||1;L.DomUtil.setPosition(c,m.containerPointToLayerPoint([0,0]));
+  if(c.width!==Math.round(sz.x*dp)||c.height!==Math.round(sz.y*dp)){c.width=Math.round(sz.x*dp);c.height=Math.round(sz.y*dp);c.style.width=sz.x+'px';c.style.height=sz.y+'px'}
+  const g=c.getContext('2d');g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,c.width,c.height);
+  const pl=this.pl,p=this.p,Z=m.getZoom();if(Z<(pl.min||13))return;const b=pl.bbox,C0=mER([(b[1]+b[3])/2,(b[0]+b[2])/2]),cp0=m.latLngToContainerPoint(p.c);
+  const s=256*Math.pow(2,Z)/MC,a=p.r*Math.PI/180,co=Math.cos(a),si=Math.sin(a),K=s*p.k;
+  // source bbox of view
+  let x0=1e99,y0=1e99,x1=-1e99,y1=-1e99;[[0,0],[sz.x,0],[0,sz.y],[sz.x,sz.y]].forEach(([X,Y])=>{const dx=(X-cp0.x)/K,dy=(Y-cp0.y)/K,u=co*dx+si*dy,v=-si*dx+co*dy,qx=C0[0]+u,qy=C0[1]-v;x0=Math.min(x0,qx);x1=Math.max(x1,qx);y0=Math.min(y0,qy);y1=Math.max(y1,qy)});
+  const B0=mER([b[1],b[0]]),B1=mER([b[3],b[2]]);x0=Math.max(x0,B0[0]);y0=Math.max(y0,B0[1]);x1=Math.min(x1,B1[0]);y1=Math.min(y1,B1[1]);if(x0>=x1||y0>=y1)return;
+  let zs=Math.round(Z+Math.log2(p.k));zs=Math.max(pl.minNat||15,Math.min(pl.nat||19,zs));
+  let ts,tx0,tx1,ty0,ty1;for(;;){ts=MC/Math.pow(2,zs);tx0=Math.floor((x0+MC/2)/ts);tx1=Math.floor((x1+MC/2)/ts);ty0=Math.floor((MC/2-y1)/ts);ty1=Math.floor((MC/2-y0)/ts);if((tx1-tx0+1)*(ty1-ty0+1)<=300||zs<=(pl.minNat||15))break;zs--}
+  g.globalAlpha=this.op;g.imageSmoothingQuality='high';const f=K*ts/256*dp;
+  for(let tx=tx0;tx<=tx1;tx++)for(let ty=ty0;ty<=ty1;ty++){const im=this.tuile(`${pl.d}/${zs}/${tx}/${ty}`);if(!im)continue;
+   const X=tx*ts-MC/2,Y=MC/2-ty*ts,u=X-C0[0],v=C0[1]-Y;
+   g.setTransform(f*co,f*si,-f*si,f*co,(cp0.x+K*(co*u-si*v))*dp,(cp0.y+K*(si*u+co*v))*dp);g.drawImage(im,0,0,256,256,-0.3,-0.3,256.6,256.6)}}});
+const adjNeutre=p=>({c:[(p.bbox[1]+p.bbox[3])/2,(p.bbox[0]+p.bbox[2])/2],r:0,k:1});
+const estNeutre=(p,a)=>{if(!a||a.k===undefined)return !a;const n=adjNeutre(p);return Math.abs(a.r)<1e-6&&Math.abs(a.k-1)<1e-6&&Math.abs(a.c[0]-n.c[0])<1e-9&&Math.abs(a.c[1]-n.c[1])<1e-9};
+const verrou=p=>!!store.get('lock_'+p.id,false);
+function ajBtn(p){if(!p.ui||!p.ui.aj)return;const v=verrou(p);p.ui.aj.textContent=v?'🔒':'🎯';p.ui.aj.classList.toggle('lk',v);p.ui.aj.title=v?'Plan verrouillé (clic pour déverrouiller)':'Ajuster ce plan (déplacer, tourner, taille)'}
 let adjEd=null;const adjB=document.getElementById('adjB'),adjP=document.getElementById('adjP');
-const adjDef=p=>({c:[...p.adj.c],r:p.adj.r,m:p.adj.m});
-function adjMaj(){const n=P.some(p=>p.adj&&p.layer);adjB.style.display=n&&!adjEd?'block':'none';if(!n&&adjEd)adjFin(false)}
-function adjAff(){const p=adjEd.layer.p,d=adjDef(adjEd);document.getElementById('adjR').textContent=(p.r-d.r>=0?'+':'')+(p.r-d.r).toFixed(1)+'°';document.getElementById('adjS').textContent=(p.m/d.m*100).toFixed(1)+' %';adjEd.layer.redraw()}
-function adjDebut(){const q=P.find(p=>p.adj&&p.layer);if(!q)return;adjEd=q;q.adjAvant=JSON.parse(JSON.stringify(q.layer.p));document.getElementById('adjT').textContent='Ajuster : '+q.nom;
+const adjDef=p=>p.adj?{c:[...p.adj.c],r:p.adj.r,m:p.adj.m}:adjNeutre(p);
+function adjMaj(){adjB.style.display='none';if(adjEd&&!adjEd.layer)adjFin(false)}
+function adjAff(){const p=adjEd.layer.p,d=adjDef(adjEd);document.getElementById('adjR').textContent=(p.r-d.r>=0?'+':'')+(p.r-d.r).toFixed(1)+'°';document.getElementById('adjS').textContent=((p.k!==undefined?p.k:p.m/d.m)*100).toFixed(1)+' %';adjEd.layer.redraw()}
+function adjDebut(q){if(!q||adjEd)return;if(!q.layer)charge(q,false);if(!q.adj&&!(q.layer instanceof TAdjL)){map.removeLayer(q.layer);q.layer=new TAdjL(q,store.get('adj_'+q.id,null)||adjNeutre(q),q.op).addTo(map)}adjEd=q;q.adjAvant=JSON.parse(JSON.stringify(q.layer.p));document.getElementById('adjT').textContent='Ajuster : '+q.nom;
  adjP.style.display='block';adjB.style.display='none';document.getElementById('adjMsg').textContent='';map.dragging.disable();map.getContainer().classList.add('adjEdit');adjAff()}
-function adjFin(ok){const q=adjEd;if(!q)return;if(!ok&&q.adjAvant){q.layer.p=q.adjAvant;q.layer.redraw()}
+function adjFin(ok){const q=adjEd;if(!q)return;if(!ok&&q.adjAvant&&q.layer){q.layer.p=q.adjAvant;q.layer.redraw()}
+ if(!q.adj&&q.layer&&estNeutre(q,q.layer.p)){map.removeLayer(q.layer);q.layer=null;adjEd=null;charge(q,false)}
  adjEd=null;adjP.style.display='none';map.dragging.enable();map.getContainer().classList.remove('adjEdit');adjMaj()}
-adjB.onclick=adjDebut;document.getElementById('adjNo').onclick=()=>adjFin(false);
+adjB.onclick=()=>{};document.getElementById('adjNo').onclick=()=>adjFin(false);
+document.getElementById('adjLk').onclick=()=>{const q=adjEd;store.set('adj_'+q.id,q.layer.p);store.set('lock_'+q.id,true);ajBtn(q);document.getElementById('adjMsg').textContent='Enregistré et verrouillé 🔒';q.adjAvant=null;setTimeout(()=>adjFin(true),700)};
 document.getElementById('adjOk').onclick=()=>{store.set('adj_'+adjEd.id,adjEd.layer.p);document.getElementById('adjMsg').textContent='Enregistré sur cet appareil.';adjEd.adjAvant=null;setTimeout(()=>adjFin(true),700)};
 document.getElementById('adjDef').onclick=()=>{adjEd.layer.p=adjDef(adjEd);adjAff()};
 document.getElementById('adjCp').onclick=async()=>{const t='CALAGE '+adjEd.id+' '+JSON.stringify(adjEd.layer.p);try{await navigator.clipboard.writeText(t);document.getElementById('adjMsg').textContent='Copié ! Colle-le dans la discussion avec Claude.'}catch(e){prompt('Copie ce texte :',t)}};
 adjP.querySelectorAll('button[data-a]').forEach(b=>b.onclick=()=>{const p=adjEd.layer.p,v=+b.dataset.v,a=b.dataset.a;
- if(a==='r')p.r+=v;else if(a==='s')p.m*=1+v/100;else{const mpp=0.5/Math.cos(p.c[0]*Math.PI/180);const pt=map.project(p.c,20),u=256*Math.pow(2,20)/40075016.68557849*mpp;const n=map.unproject([pt.x+(a==='x'?v*u:0),pt.y-(a==='y'?v*u:0)],20);p.c=[n.lat,n.lng]}adjAff()});
+ if(a==='r')p.r+=v;else if(a==='s'){if(p.k!==undefined)p.k*=1+v/100;else p.m*=1+v/100}else{const mpp=0.5/Math.cos(p.c[0]*Math.PI/180);const pt=map.project(p.c,20),u=256*Math.pow(2,20)/40075016.68557849*mpp;const n=map.unproject([pt.x+(a==='x'?v*u:0),pt.y-(a==='y'?v*u:0)],20);p.c=[n.lat,n.lng]}adjAff()});
 {const mc=map.getContainer();let st=null;
  mc.addEventListener('pointerdown',e=>{if(!adjEd||adjP.contains(e.target)||e.target.closest('#panel,.leaflet-control'))return;st={x:e.clientX,y:e.clientY,c:map.latLngToContainerPoint(adjEd.layer.p.c)};mc.setPointerCapture(e.pointerId);e.stopPropagation()},true);
  mc.addEventListener('pointermove',e=>{if(!st||!adjEd)return;const ll=map.containerPointToLatLng([st.c.x+e.clientX-st.x,st.c.y+e.clientY-st.y]);adjEd.layer.p.c=[ll.lat,ll.lng];adjEd.layer.redraw();e.stopPropagation()},true);
@@ -478,6 +504,7 @@ contCb.onchange=()=>{contCb.checked?contours.addTo(map):map.removeLayer(contours
 function sauve(){const o={};P.forEach(p=>{if(p.layer||p.op!==1)o[p.id]={on:!!p.layer,op:p.op}});store.set('plans',o)}
 function charge(p,aller){
  if(!p.layer&&p.adj){p.layer=new AdjL(store.get('adj_'+p.id,null)||adjDef(p),p.op).addTo(map);const Ly=p.layer;lire(p.adj.img).then(b=>b&&createImageBitmap(new Blob([b],{type:'image/webp'}))).then(im=>{if(im){Ly.img=im;Ly.redraw()}});p.ui.cb.checked=true;p.ui.row.classList.add('actif');p.poly&&p.poly.setStyle({fillOpacity:0,weight:1,dashArray:'4 4'})}
+ if(!p.layer&&!p.adj){const sv=store.get('adj_'+p.id,null);if(sv&&!estNeutre(p,sv)){p.layer=new TAdjL(p,sv,p.op).addTo(map);p.ui.cb.checked=true;p.ui.row.classList.add('actif');p.poly&&p.poly.setStyle({fillOpacity:0,weight:1,dashArray:'4 4'})}}
  if(!p.layer){p.layer=new CTile({d:p.d,minZoom:p.min||13,maxZoom:22,maxNativeZoom:p.nat||19,minNativeZoom:p.minNat||15,bounds:L.latLngBounds([p.bbox[1],p.bbox[0]],[p.bbox[3],p.bbox[2]]),pane:'plans',opacity:p.op,keepBuffer:1,updateWhenZooming:false}).addTo(map);
   p.ui.cb.checked=true;p.ui.row.classList.add('actif');p.poly&&p.poly.setStyle({fillOpacity:0,weight:1,dashArray:'4 4'})}
  if(p.extra&&!p.xl)chargeExtra(p);
@@ -507,8 +534,9 @@ function initPlans(j){
   det.appendChild(bar);
   ps.forEach(p=>{const s=etat[p.id]||{on:false,op:1};p.op=s.op;
    const r=document.createElement('div');r.className='plan';r.dataset.nom=(p.nom+' '+dep).toLowerCase();
-   r.innerHTML=`<input type="checkbox" title="Charger / décharger"><span class="nom" title="Aller sur ${p.nom}">${p.nom}</span><span class="badge" title="${p.t||''}">${p.ok||'•'}</span><button title="Aller sur ce plan">Aller</button><input type="range" min="0" max="1" step="0.05" value="${p.op}" title="Transparence">`;
-   const [cb,nm,,bt,rg]=r.children;p.ui={cb,row:r};
+   r.innerHTML=`<input type="checkbox" title="Charger / décharger"><span class="nom" title="Aller sur ${p.nom}">${p.nom}</span><span class="badge" title="${p.t||''}">${p.ok||'•'}</span><button title="Aller sur ce plan">Aller</button><button class="aj"></button><input type="range" min="0" max="1" step="0.05" value="${p.op}" title="Transparence">`;
+   const [cb,nm,,bt,aj,rg]=r.children;p.ui={cb,row:r,aj};ajBtn(p);
+   aj.onclick=()=>{if(verrou(p)){if(confirm('« '+p.nom+' » est verrouillé. Le déverrouiller pour l\'ajuster ?')){store.set('lock_'+p.id,false);ajBtn(p)}return}if(adjEd)adjFin(false);adjDebut(p);plier()};
    cb.onchange=()=>cb.checked?charge(p,false):decharge(p);
    nm.onclick=bt.onclick=()=>{charge(p,true);plier()};
    rg.oninput=()=>{p.op=+rg.value;p.layer&&p.layer.setOpacity(p.op);sauve()};
