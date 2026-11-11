@@ -125,7 +125,7 @@ details.dep>summary{padding:9px 8px;font-size:15px}
  <div id="tete"><b>Atlas</b><button id="pli" title="Replier / déplier le menu">☰</button></div>
  <div id="corps">
   <div class="sec"><h4>Rechercher un lieu</h4>
-   <div id="rech"><input id="q" placeholder="Adresse, lieu, commune…"><button id="go">🔍</button></div><div id="res"></div></div>
+   <div id="rech"><input id="q" placeholder="Adresse, lieu, ou 48.9476, 2.154"><button id="go">🔍</button></div><div id="res"></div></div>
   <div class="sec"><h4>Fonds de carte</h4>
    <div id="fonds" class="fonds"></div>
    <div class="fond-note">Active plusieurs fonds et règle leur transparence. Le dernier fond activé s'affiche au-dessus des autres.</div>
@@ -525,7 +525,9 @@ document.getElementById('tout0').onclick=()=>P.forEach(p=>p.layer&&decharge(p));
 
 // ---------- recherche ----------
 const q=document.getElementById('q'),res=document.getElementById('res');
-async function chercher(){const t=q.value.trim();if(!t)return;res.textContent='Recherche…';
+let ptMk=null;function coordPt(t){const m=t.replace(/[()°]/g,' ').match(/^\s*(-?\d{1,3}(?:[.,]\d+)?)\s*[,;\s]\s*(-?\d{1,3}(?:[.,]\d+)?)\s*$/);if(!m)return null;let a=parseFloat(m[1].replace(',','.')),b=parseFloat(m[2].replace(',','.'));if(Math.abs(a)>90&&Math.abs(b)<=90)[a,b]=[b,a];if(Math.abs(a)>90||Math.abs(b)>180)return null;return [a,b]}
+function allerPt(la,lo){map.setView([la,lo],18);ptMk&&map.removeLayer(ptMk);const tx=la.toFixed(6)+', '+lo.toFixed(6);ptMk=L.marker([la,lo]).addTo(map).bindPopup('<b>📍 '+tx+'</b><br><a href="#" onclick="map.removeLayer(ptMk);ptMk=null;return false">Retirer le point</a>').openPopup();res.innerHTML='';q.blur();plier()}
+async function chercher(){const t=q.value.trim();if(!t)return;const cp=coordPt(t);if(cp){allerPt(cp[0],cp[1]);return}res.textContent='Recherche…';
  try{const r=await fetch('https://data.geopf.fr/geocodage/search?limit=5&q='+encodeURIComponent(t));const j=await r.json();res.innerHTML='';
   if(!j.features||!j.features.length){res.textContent='Aucun résultat';return}
   j.features.forEach(f=>{const d=document.createElement('div');d.textContent=f.properties.label;d.onclick=()=>{const [lo,la]=f.geometry.coordinates;map.setView([la,lo],17);res.innerHTML='';q.blur();plier()};res.appendChild(d)})}
