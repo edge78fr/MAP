@@ -155,7 +155,8 @@ details.dep>summary{padding:9px 8px;font-size:15px}
    <h5>Divers</h5>
    <div class="cou"><label><input id="bss" type="checkbox"> Points BRGM « Dossiers du sous-sol »</label></div>
    <div class="cou"><label><input id="aqu" type="checkbox"> Aqueducs et rigoles de Versailles</label><input id="aquo" class="op" type="range" min="0.1" max="1" step="0.05" value="1" title="Opacité"></div>
-   <div class="cou"><label><input id="cont" type="checkbox" checked> Contours des plans</label></div></div>
+   <div class="cou"><label><input id="cont" type="checkbox" checked> Contours des plans</label></div>
+   <div class="cou"><label><input id="net" type="checkbox"> Netteté des plans</label> <select id="netF" title="Force" style="font-size:12px;margin-left:6px"><option value="1">douce</option><option value="2" selected>moyenne</option><option value="3">forte</option></select></div></div>
   <div class="sec"><h4>Plans <span id="nbp" style="text-transform:none;color:#999"></span></h4>
    <input id="filtre" placeholder="Filtrer les plans…"><div id="plans">Chargement…</div>
    <button id="tout0" title="Décharger tous les plans">Tout décharger</button></div>
@@ -241,7 +242,10 @@ function initialiserMenusRepliables(){
 }
 initialiserMenusRepliables();
 const map=L.map('m',{zoomControl:true,maxZoom:22,zoomSnap:0.5,wheelPxPerZoomLevel:90});
-map.createPane('plans').style.zIndex=250;map.createPane('cadp').style.zIndex=300;map.createPane('cont').style.zIndex=350;
+map.createPane('plans').style.zIndex=250;
+document.body.insertAdjacentHTML('beforeend','<svg width="0" height="0" style="position:absolute"><filter id="netS" color-interpolation-filters="sRGB"><feConvolveMatrix id="netK" order="3" preserveAlpha="true" kernelMatrix="0 -1 0 -1 5 -1 0 -1 0"/></filter></svg>');
+function netMaj(){const on=store.get('net',false),f=+store.get('netF',2),a=[0,0.4,0.8,1.3][f],c=[1,1.1,1.2,1.35][f];document.getElementById('netK').setAttribute('kernelMatrix',`0 ${-a} 0 ${-a} ${1+4*a} ${-a} 0 ${-a} 0`);map.getPane('plans').style.filter=on?`url(#netS) contrast(${c})`:'';const cb=document.getElementById('net'),se=document.getElementById('netF');cb.checked=on;se.value=f;cb.onchange=()=>{store.set('net',cb.checked);netMaj()};se.onchange=()=>{store.set('netF',+se.value);store.set('net',true);netMaj()}}
+netMaj();map.createPane('cadp').style.zIndex=300;map.createPane('cont').style.zIndex=350;
 const fondOpt={maxZoom:22,maxNativeZoom:18,keepBuffer:1,updateWhenZooming:false};
 const B={
  o:L.tileLayer(g('ORTHOIMAGERY.ORTHOPHOTOS','normal','image/jpeg'),{...fondOpt,maxNativeZoom:19,attribution:'IGN'}),
