@@ -38,6 +38,7 @@ html,body,#m{height:100%;margin:0}
 .sousrub>summary>span:first-child{flex:1}
 .sousrub-body{padding:2px 0 5px 10px}
 #info:empty{display:none}
+#ordre:empty{display:none}#ordre{margin:2px 0 8px;padding:6px;border-radius:8px;background:rgba(255,255,255,.45);border:1px solid rgba(0,0,0,.08)}#ordre .ot{font-size:11px;color:#666;margin-bottom:3px}#ordre .or{display:flex;align-items:center;gap:4px;margin:2px 0;font-size:12px}#ordre .or span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#ordre .or button{padding:1px 7px;font-size:12px;line-height:1.3}
 .depbar{display:flex;gap:4px;margin:3px 0 4px 14px}.depbar button{font-size:11px;padding:1px 6px;border:1px solid #ccc;background:#f6f6f6;border-radius:4px;cursor:pointer}.depbar button:hover{background:#e8e8e8}
 .sec h5{margin:7px 0 2px;font-size:10.5px;font-weight:600;color:#888}
 .opf{font-size:12px;color:#666;display:flex;align-items:center;gap:6px;margin:2px 0 2px}
@@ -48,9 +49,9 @@ details.dep{margin:2px 0;border-radius:5px}
 details.dep>summary{cursor:pointer;padding:3px 4px;font-weight:600;background:#f3f3f3;border-radius:5px;list-style:none;display:flex;justify-content:space-between}
 details.dep>summary::-webkit-details-marker{display:none}
 details.dep>summary:before{content:'▸ ';color:#888}details.dep[open]>summary:before{content:'▾ '}
-.plan{display:grid;grid-template-columns:18px 1fr auto auto auto;align-items:center;gap:4px;margin:3px 0 3px 6px}
+.plan{display:grid;grid-template-columns:18px 1fr auto auto auto auto;align-items:center;gap:4px;margin:3px 0 3px 6px}
 .plan .aj{padding:2px 5px;border:1px solid #ccd;background:#fff;border-radius:7px;cursor:pointer;font-size:12px}.plan .aj.lk{background:#fff4d6}.plan .nom{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}.plan .nom:hover{text-decoration:underline}
-.plan input[type=range]{grid-column:2/7;width:100%;height:14px;margin:0;display:none}.plan.actif input[type=range]{display:block}
+.plan input[type=range]{grid-column:2/8;width:100%;height:14px;margin:0;display:none}.plan.actif input[type=range]{display:block}
 .badge{font-size:11px;cursor:help}
 #filtre{width:100%;box-sizing:border-box;font:12px system-ui;padding:3px 5px;border:1px solid #bbb;border-radius:4px;margin-bottom:4px}
 #rech{display:flex;gap:4px}#rech input{flex:1;min-width:0;font:12px system-ui;padding:3px 5px;border:1px solid #bbb;border-radius:4px}
@@ -97,7 +98,7 @@ details.dep>summary{background:rgba(255,255,255,.38)!important}
 #p input[type=checkbox]{width:20px;height:20px;vertical-align:-4px;margin:2px 6px 2px 0}
 .fonds{gap:2px}.fond-titre,.cou label{padding:2px 0}.fond-hist{padding-left:7px}.fond-slider{height:22px}.rub>summary{padding:10px 2px;font-size:12px}.sousrub>summary{padding:8px 1px;font-size:12px}
 input.op,.plan input[type=range]{height:26px;max-width:none}
-.plan{grid-template-columns:26px 1fr auto auto auto;gap:6px;margin:6px 0 6px 2px}
+.plan{grid-template-columns:26px 1fr auto auto auto auto;gap:6px;margin:6px 0 6px 2px}
 details.dep>summary{padding:9px 8px;font-size:15px}
 #filtre,#rech input{font-size:16px;padding:7px 8px}
 .sec h4{font-size:12px}.sec h5{font-size:12px}
@@ -158,7 +159,7 @@ details.dep>summary{padding:9px 8px;font-size:15px}
    <div class="cou"><label><input id="cont" type="checkbox" checked> Contours des plans</label></div>
    <div class="cou"><label><input id="net" type="checkbox"> Netteté des plans</label> <select id="netF" title="Force" style="font-size:12px;margin-left:6px"><option value="1">douce</option><option value="2" selected>moyenne</option><option value="3">forte</option></select></div></div>
   <div class="sec"><h4>Plans <span id="nbp" style="text-transform:none;color:#999"></span></h4>
-   <input id="filtre" placeholder="Filtrer les plans…"><div id="plans">Chargement…</div>
+   <div id="ordre"></div><input id="filtre" placeholder="Filtrer les plans…"><div id="plans">Chargement…</div>
    <button id="tout0" title="Décharger tous les plans">Tout décharger</button></div>
   <div class="sec"><h4>Outils</h4><div class="outils">
    <button id="bPos">📍 Ma position</button>
@@ -513,14 +514,25 @@ function charge(p,aller){
   p.ui.cb.checked=true;p.ui.row.classList.add('actif');p.poly&&p.poly.setStyle({fillOpacity:0,weight:1,dashArray:'4 4'})}
  if(p.extra&&!p.xl)chargeExtra(p);
  if(aller)map.fitBounds([[p.bbox[1],p.bbox[0]],[p.bbox[3],p.bbox[2]]],{maxZoom:17});
- sauve();majNb();adjMaj()}
-function decharge(p){if(p.layer){map.removeLayer(p.layer);p.layer=null}if(p.xl){map.removeLayer(p.xl);p.xl=null}p.ui.cb.checked=false;p.ui.row.classList.remove('actif');p.poly&&p.poly.setStyle({fillOpacity:.15,weight:2,dashArray:null});sauve();majNb();adjMaj()}
+ sauve();majNb();adjMaj();ordreMaj()}
+function decharge(p){if(p.layer){map.removeLayer(p.layer);p.layer=null}if(p.xl){map.removeLayer(p.xl);p.xl=null}p.ui.cb.checked=false;p.ui.row.classList.remove('actif');p.poly&&p.poly.setStyle({fillOpacity:.15,weight:2,dashArray:null});sauve();majNb();adjMaj();ordreMaj()}
 const colT={salle:'#c0f',info:'#08f',pa:'#f00',pb:'#f60',vehicule:'#555',cao:'#0a0',caf:'#060',passage:'#fa0',elec:'#ff0',danger:'#f00'};
 const colR={principal:'#e00',secondaire:'#f80',chemin:'#fc0'};
 async function chargeExtra(p){p.xl=L.layerGroup().addTo(map);const bx=await lire('extra/'+p.extra);if(!bx||!p.xl)return;const j=JSON.parse(new TextDecoder().decode(bx));if(!p.xl)return;
  L.geoJSON(j,{pane:'cadp',style:f=>({color:colR[f.properties.type]||'#f80',weight:f.properties.type==='principal'?3:2,dashArray:f.properties.type==='chemin'?'4 4':null,opacity:.9}),
   pointToLayer:(f,ll)=>L.circleMarker(ll,{pane:'cadp',radius:5,color:'#fff',weight:1.5,fillColor:colT[f.properties.type]||'#08f',fillOpacity:1}),
   onEachFeature:(f,l)=>{if(f.properties.nom)l.bindTooltip(f.properties.nom)}}).addTo(p.xl)}
+// ---------- ordre des calques actifs (haut de la liste = au-dessus) ----------
+let ORD=store.get('ordre',[]);
+function zDe(l,z){if(!l)return;if(l.setZIndex&&l instanceof L.GridLayer)l.setZIndex(z);else if(l._c)l._c.style.zIndex=z}
+function ordreMaj(){const act=P.filter(p=>p.layer);ORD=ORD.filter(id=>act.some(p=>p.id===id));act.forEach(p=>{if(!ORD.includes(p.id))ORD.unshift(p.id)});store.set('ordre',ORD);
+ ORD.forEach((id,i)=>{const p=P.find(q=>q.id===id);zDe(p&&p.layer,10+ORD.length-i)});
+ const box=document.getElementById('ordre');if(!box)return;box.innerHTML='';if(ORD.length<2)return;
+ box.innerHTML='<div class="ot">Ordre des plans chargés (en haut = au-dessus)</div>';
+ ORD.forEach((id,i)=>{const p=P.find(q=>q.id===id);const r=document.createElement('div');r.className='or';
+  r.innerHTML=`<span title="${p.nom}">${p.nom}</span><button title="Monter (passer au-dessus)">▲</button><button title="Descendre (passer dessous)">▼</button>`;
+  const [,up,dn]=r.children;up.disabled=i===0;dn.disabled=i===ORD.length-1;
+  up.onclick=()=>{[ORD[i-1],ORD[i]]=[ORD[i],ORD[i-1]];ordreMaj()};dn.onclick=()=>{[ORD[i+1],ORD[i]]=[ORD[i],ORD[i+1]];ordreMaj()};box.appendChild(r)})}
 function majNb(){document.getElementById('nbp').textContent=`(${P.filter(p=>p.layer).length} chargé(s) / ${P.length})`}
 function initPlans(j){
  P=j.plans;const box=document.getElementById('plans');box.innerHTML='';
@@ -536,10 +548,11 @@ function initPlans(j){
   bOff.onclick=()=>ps.forEach(p=>p.layer&&decharge(p));
   bVoir.onclick=()=>{const b=ps.reduce((a,p)=>[Math.min(a[0],p.bbox[0]),Math.min(a[1],p.bbox[1]),Math.max(a[2],p.bbox[2]),Math.max(a[3],p.bbox[3])],[180,90,-180,-90]);map.fitBounds([[b[1],b[0]],[b[3],b[2]]])};
   det.appendChild(bar);
-  ps.forEach(p=>{const s=etat[p.id]||{on:false,op:1};p.op=s.op;
+  ps.forEach(p=>{const s=etat[p.id]||{on:false,op:1};p.op=s.op;if(p.nomO===undefined)p.nomO=p.nom;{const nn=store.get('nom_'+p.id,null);if(nn)p.nom=nn}
    const r=document.createElement('div');r.className='plan';r.dataset.nom=(p.nom+' '+dep).toLowerCase();
-   r.innerHTML=`<input type="checkbox" title="Charger / décharger"><span class="nom" title="Aller sur ${p.nom}">${p.nom}</span><span class="badge" title="${p.t||''}">${p.ok||'•'}</span><button title="Aller sur ce plan">Aller</button><button class="aj"></button><input type="range" min="0" max="1" step="0.05" value="${p.op}" title="Transparence">`;
-   const [cb,nm,,bt,aj,rg]=r.children;p.ui={cb,row:r,aj};ajBtn(p);
+   r.innerHTML=`<input type="checkbox" title="Charger / décharger"><span class="nom" title="Aller sur ${p.nom}">${p.nom}</span><span class="badge" title="${p.t||''}">${p.ok||'•'}</span><button title="Aller sur ce plan">Aller</button><button class="aj"></button><button class="aj rn" title="Renommer ce plan">✏️</button><input type="range" min="0" max="1" step="0.05" value="${p.op}" title="Transparence">`;
+   const [cb,nm,,bt,aj,rn,rg]=r.children;p.ui={cb,row:r,aj};ajBtn(p);
+   rn.onclick=()=>{const v=prompt('Nouveau nom (vide = nom d\'origine) :',p.nom);if(v===null)return;const t=v.trim();store.set('nom_'+p.id,t&&t!==p.nomO?t:null);p.nom=t||p.nomO;nm.textContent=p.nom;nm.title='Aller sur '+p.nom;r.dataset.nom=(p.nom+' '+dep).toLowerCase();p.poly&&p.poly.setTooltipContent(p.nom);ordreMaj()};
    aj.onclick=()=>{if(verrou(p)){if(confirm('« '+p.nom+' » est verrouillé. Le déverrouiller pour l\'ajuster ?')){store.set('lock_'+p.id,false);ajBtn(p)}return}if(adjEd)adjFin(false);adjDebut(p);plier()};
    cb.onchange=()=>cb.checked?charge(p,false):decharge(p);
    nm.onclick=bt.onclick=()=>{charge(p,true);plier()};
